@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>f-gc.dev</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --electric-border-color: color(display-p3 0.196 0.161 0.745);
+      --electric-light-color:  color(display-p3 0.36  0.30  0.93);
+      --gradient-color:        color(display-p3 0.10  0.08  0.30 / 0.45);
+      --color-neutral-900:     color(display-p3 0.09  0.09  0.10);
+      --bg:            color(display-p3 0.055 0.055 0.07);
+      --fg:            color(display-p3 0.95  0.95  0.97);
+      --muted:         color(display-p3 0.38  0.38  0.44);
+      --accent:        color(display-p3 0.196 0.161 0.745);
+      --accent-bright: color(display-p3 0.38  0.32  0.94);
+      --card-w: 580px;
+      --card-h: 700px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background-color: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* grain */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 9999; opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-repeat: repeat; background-size: 128px 128px;
+    }
+    /* scanlines */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none; z-index: 9998;
+      background: repeating-linear-gradient(to bottom,transparent,transparent 2px,color(display-p3 0 0 0/0.06) 2px,color(display-p3 0 0 0/0.06) 4px);
+    }
+
+    /* HEADER */
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 26px 48px;
+      border-bottom: 1px solid color(display-p3 0.196 0.161 0.745 / 0.14);
+      position: sticky; top: 0; z-index: 100;
+      background: color(display-p3 0.04 0.04 0.05 / 0.88);
+      backdrop-filter: blur(14px);
+    }
+    .logo { font-weight: 600; font-size: 15px; letter-spacing: 0.04em; color: var(--accent-bright); }
+    .logo span { color: var(--fg); opacity: 0.4; }
+    nav { display: flex; gap: 32px; font-size: 12px; letter-spacing: 0.1em; color: var(--muted); }
+    nav a { color: inherit; text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+    nav a:hover { color: var(--accent-bright); }
+
+    /* HERO */
+    .hero {
+      padding: 100px 48px 72px;
+      max-width: 1100px; margin: 0 auto; position: relative;
+    }
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--accent-bright); margin-bottom: 22px;
+      opacity: 0; animation: fadeUp 0.6s 0.1s forwards;
+    }
+    .hero-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(50px, 6.5vw, 84px); font-weight: 400;
+      line-height: 1.0; letter-spacing: -0.02em; margin-bottom: 20px;
+      opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
+    }
+    .hero-title em { font-style: italic; color: var(--accent-bright); }
+    .hero-tagline {
+      font-size: 12px; letter-spacing: 0.13em; color: var(--muted); text-transform: uppercase;
+      opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+    }
+    .hero-tagline a { color: var(--accent-bright); text-decoration: none; transition: opacity 0.2s; }
+    .hero-tagline a:hover { text-decoration: underline; }
+
+    /* SECTION LABEL */
+    .section-label {
+      max-width: 1100px; margin: 0 auto; padding: 0 48px;
+      display: flex; align-items: center; gap: 16px; margin-bottom: 48px;
+    }
+    .section-label span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); white-space: nowrap;
+    }
+    .section-label::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(to right, color(display-p3 0.196 0.161 0.745 / 0.25), transparent);
+    }
+
+    /* HERO CARD */
+    .hero-card-section {
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 48px 80px;
+      display: flex; justify-content: center;
+    }
+
+    .card-container {
+      padding: 2px; border-radius: 24px; position: relative;
+      width: var(--card-w); max-width: 100%; flex-shrink: 0;
+      background:
+        linear-gradient(-30deg, var(--gradient-color), transparent, var(--gradient-color)),
+        linear-gradient(to bottom, var(--color-neutral-900), var(--color-neutral-900));
+      opacity: 0; animation: fadeUp 0.7s 0.45s forwards;
+    }
+
+    .inner-container { position: relative; }
+
+    .border-outer {
+      border: 2px solid color(display-p3 0.196 0.161 0.745 / 0.5);
+      border-radius: 24px; padding-right: 4px; padding-bottom: 4px;
+    }
+    .main-card {
+      width: calc(var(--card-w) - 8px);
+      max-width: calc(100% - 8px);
+      height: var(--card-h);
+      border-radius: 24px;
+      border: 2px solid var(--electric-border-color);
+      margin-top: -4px; margin-left: -4px;
+      filter: url(#turbulent-displace);
+    }
+    .glow-layer-1 {
+      border: 2px solid color(display-p3 0.196 0.161 0.745 / 0.6);
+      border-radius: 24px; width: 100%; height: 100%;
+      position: absolute; inset: 0; filter: blur(1px);
+    }
+    .glow-layer-2 {
+      border: 2px solid var(--electric-light-color);
+      border-radius: 24px; width: 100%; height: 100%;
+      position: absolute; inset: 0; filter: blur(4px);
+    }
+    .overlay-1 {
+      position: absolute; inset: 0; border-radius: 24px;
+      opacity: 1; mix-blend-mode: overlay; transform: scale(1.1); filter: blur(16px);
+      background: linear-gradient(-30deg, white, transparent 30%, transparent 70%, white);
+    }
+    .overlay-2 {
+      position: absolute; inset: 0; border-radius: 24px;
+      opacity: 0.5; mix-blend-mode: overlay; transform: scale(1.1); filter: blur(16px);
+      background: linear-gradient(-30deg, white, transparent 30%, transparent 70%, white);
+    }
+    .background-glow {
+      position: absolute; inset: 0; border-radius: 24px;
+      filter: blur(32px); transform: scale(1.1); opacity: 0.28; z-index: -1;
+      background: linear-gradient(-30deg, var(--electric-light-color), transparent, var(--electric-border-color));
+    }
+
+    /* Card content */
+    .content-container {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      overflow: hidden; border-radius: 22px;
+    }
+    .content-top { padding: 26px 26px 10px; }
+
+    .scrollbar-glass {
+      background:
+        radial-gradient(47.2% 50% at 50.39% 88.37%, color(display-p3 1 1 1/0.12) 0%, transparent 100%),
+        color(display-p3 1 1 1/0.04);
+      position: relative; border-radius: 14px; width: fit-content;
+      padding: 5px 13px; text-transform: uppercase;
+      font-weight: 600; font-size: 10px; letter-spacing: 0.12em;
+      color: color(display-p3 1 1 1/0.65);
+    }
+    .scrollbar-glass::before {
+      content: ''; position: absolute; inset: 0; padding: 1px;
+      background: linear-gradient(150deg,
+        color(display-p3 1 1 1/0.48) 16.73%, color(display-p3 1 1 1/0.08) 30.2%,
+        color(display-p3 1 1 1/0.08) 68.2%,  color(display-p3 1 1 1/0.60) 81.89%);
+      border-radius: inherit;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: xor; -webkit-mask-composite: xor; pointer-events: none;
+    }
+
+    /* ASCII block */
+    .ascii-wrapper {
+      flex: 1; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      padding: 6px 2px 2px;
+    }
+    .ascii-art {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 300;
+      /* JS will set a precise size; this is a safe fallback */
+      font-size: 4px;
+      line-height: 1.18;
+      white-space: pre;
+      color: color(display-p3 0.72 0.68 0.98);
+      opacity: 0.85;
+      letter-spacing: 0;
+      display: block;
+      max-width: 100%;
+    }
+
+    .divider {
+      border: none; height: 1px; background-color: currentColor;
+      opacity: 0.1; margin: 0 26px;
+      mask-image: linear-gradient(to right, transparent, black, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black, transparent);
+    }
+    .content-bottom {
+      padding: 12px 26px 22px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .card-tagline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: color(display-p3 1 1 1/0.3);
+    }
+    .card-cv-link {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent-bright); text-decoration: none; font-weight: 500;
+      white-space: nowrap; transition: gap 0.2s;
+    }
+    .card-cv-link:hover { gap: 11px; }
+    .card-cv-link::after { content: '→'; }
+
+    /* PROJECTS LIST */
+    .projects-section {
+      max-width: 1100px; margin: 0 auto; padding: 0 48px 100px;
+    }
+    .project-list {
+      border-top: 1px solid color(display-p3 0.196 0.161 0.745 / 0.15);
+    }
+    .project-row {
+      display: grid; grid-template-columns: 1fr auto;
+      align-items: center; gap: 24px;
+      padding: 22px 8px; border-bottom: 1px solid color(display-p3 1 1 1/0.06);
+      text-decoration: none; color: inherit;
+      border-radius: 6px;
+      transition: background 0.18s, padding-left 0.18s;
+      opacity: 0; animation: fadeUp 0.5s forwards;
+    }
+    .project-row:nth-child(1){animation-delay:0.5s}
+    .project-row:nth-child(2){animation-delay:0.6s}
+    .project-row:nth-child(3){animation-delay:0.7s}
+    .project-row:nth-child(4){animation-delay:0.8s}
+    .project-row:nth-child(5){animation-delay:0.9s}
+    .project-row:hover {
+      padding-left: 18px;
+      background: color(display-p3 0.196 0.161 0.745 / 0.06);
+    }
+    .project-row:hover .project-arrow { opacity: 1; transform: translateX(4px); }
+    .project-meta { display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; }
+    .project-name { font-size: 17px; font-weight: 500; letter-spacing: -0.01em; }
+    .project-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent-bright); opacity: 0.65;
+    }
+    .project-desc { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+    .project-arrow {
+      font-size: 16px; color: var(--accent-bright); opacity: 0.3; flex-shrink: 0;
+      transition: opacity 0.18s, transform 0.18s;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid color(display-p3 0.196 0.161 0.745 / 0.1);
+      padding: 28px 48px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: 0.08em; color: var(--muted);
+    }
+    footer a { color: var(--accent-bright); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ANIMATION */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* cursor */
+    .cursor {
+      width: 6px; height: 6px; background: var(--accent-bright);
+      border-radius: 50%; position: fixed; pointer-events: none;
+      z-index: 10000; mix-blend-mode: screen;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 860px) {
+      :root { --card-w: 100%; --card-h: 520px; }
+      header { padding: 18px 24px; }
+      .hero { padding: 72px 24px 52px; }
+      .section-label, .hero-card-section, .projects-section { padding-left: 24px; padding-right: 24px; }
+    }
+    @media (max-width: 480px) {
+      :root { --card-h: 400px; }
+      nav { gap: 18px; font-size: 11px; }
+      footer { padding: 22px 24px; flex-direction: column; gap: 6px; text-align: center; }
+      .project-name { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+
+  <svg style="position:absolute;width:0;height:0;overflow:hidden;">
+    <defs>
+      <filter id="turbulent-displace" colorInterpolationFilters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="1"/>
+        <feOffset in="noise1" dx="0" dy="0" result="offsetNoise1">
+          <animate attributeName="dy" values="700; 0" dur="6s" repeatCount="indefinite" calcMode="linear"/>
+        </feOffset>
+        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="1"/>
+        <feOffset in="noise2" dx="0" dy="0" result="offsetNoise2">
+          <animate attributeName="dy" values="0; -700" dur="6s" repeatCount="indefinite" calcMode="linear"/>
+        </feOffset>
+        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="2"/>
+        <feOffset in="noise1" dx="0" dy="0" result="offsetNoise3">
+          <animate attributeName="dx" values="490; 0" dur="6s" repeatCount="indefinite" calcMode="linear"/>
+        </feOffset>
+        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="2"/>
+        <feOffset in="noise2" dx="0" dy="0" result="offsetNoise4">
+          <animate attributeName="dx" values="0; -490" dur="6s" repeatCount="indefinite" calcMode="linear"/>
+        </feOffset>
+        <feComposite in="offsetNoise1" in2="offsetNoise2" result="part1"/>
+        <feComposite in="offsetNoise3" in2="offsetNoise4" result="part2"/>
+        <feBlend in="part1" in2="part2" mode="color-dodge" result="combinedNoise"/>
+        <feDisplacementMap in="SourceGraphic" in2="combinedNoise" scale="30" xChannelSelector="R" yChannelSelector="B"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <header>
+    <div class="logo">f-gc<span>.dev</span></div>
+    <nav>
+      <a href="#projects">projects</a>
+      <a href="https://fguadarrama.com" target="_blank" rel="noopener">about</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <p class="hero-eyebrow">// f-gc.dev</p>
+    <h1 class="hero-title">tiny tools.<br><em>real problems.</em></h1>
+    <p class="hero-tagline">clinician · builder · <a href="https://fguadarrama.com/cv" target="_blank" rel="noopener">academic cv ↗</a></p>
+  </section>
+
+  <div class="section-label">
+    <span>// portrait</span>
+  </div>
+
+  <div class="hero-card-section">
+    <div class="card-container">
+      <div class="inner-container">
+        <div class="border-outer">
+          <div class="main-card"></div>
+        </div>
+        <div class="glow-layer-1"></div>
+        <div class="glow-layer-2"></div>
+      </div>
+      <div class="overlay-1"></div>
+      <div class="overlay-2"></div>
+      <div class="background-glow"></div>
+      <div class="content-container">
+        <div class="content-top">
+          <div class="scrollbar-glass">ASCII · 2025</div>
+        </div>
+        <div class="ascii-wrapper">
+          <pre class="ascii-art" id="ascii-art"></pre>
+        </div>
+        <hr class="divider" />
+        <div class="content-bottom">
+          <span class="card-tagline">clinician · developer · mx</span>
+          <a href="https://fguadarrama.com/cv" target="_blank" rel="noopener" class="card-cv-link">Academic CV</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label" id="projects">
+    <span>// projects</span>
+  </div>
+
+  <section class="projects-section">
+    <div class="project-list">
+
+      <a href="#" class="project-row">
+        <div>
+          <div class="project-meta">
+            <span class="project-name">El Castor Copiador</span>
+            <span class="project-tag">Chrome Extension</span>
+          </div>
+          <p class="project-desc">One-click lab results copying for INCMNSZ's clinical system. Saves minutes on every patient note.</p>
+        </div>
+        <span class="project-arrow">→</span>
+      </a>
+
+      <a href="#" class="project-row">
+        <div>
+          <div class="project-meta">
+            <span class="project-name">Roles de Canela</span>
+            <span class="project-tag">Scheduling App</span>
+          </div>
+          <p class="project-desc">Oncology residency scheduling with Google Sheets sync and live academic calendar data.</p>
+        </div>
+        <span class="project-arrow">→</span>
+      </a>
+
+      <a href="#" class="project-row">
+        <div>
+          <div class="project-meta">
+            <span class="project-name">Recetador</span>
+            <span class="project-tag">Clinical Tool</span>
+          </div>
+          <p class="project-desc">Medical prescription generator with PDF export, digital signature, and letterhead support.</p>
+        </div>
+        <span class="project-arrow">→</span>
+      </a>
+
+      <a href="#" class="project-row">
+        <div>
+          <div class="project-meta">
+            <span class="project-name">Color Collection</span>
+            <span class="project-tag">Visual Tool</span>
+          </div>
+          <p class="project-desc">A curated personal archive of colors — named, hex-coded, and organized by feel.</p>
+        </div>
+        <span class="project-arrow">→</span>
+      </a>
+
+      <a href="https://fguadarrama.com" target="_blank" rel="noopener" class="project-row">
+        <div>
+          <div class="project-meta">
+            <span class="project-name">fguadarrama.com</span>
+            <span class="project-tag">Personal Site</span>
+          </div>
+          <p class="project-desc">Personal site — bilingual, physician, builder of small useful things.</p>
+        </div>
+        <span class="project-arrow">→</span>
+      </a>
+
+    </div>
+  </section>
+
+  <footer>
+    <span>f-gc.dev</span>
+    <span>tiny tools. real problems.</span>
+  </footer>
+
+  <script>
+    // Cursor
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = (e.clientX - 3) + 'px';
+      cursor.style.top  = (e.clientY - 3) + 'px';
+    });
+
+    // ASCII portrait — embedded directly, no fetch needed
+    const ASCII_ART = `                                                                                          
+                                                                                          
+                                   \u00a8\u201a\u2018\u2018\u2018\u00a8\u00a8\u00a8\u00b8\u2018\u2013\u00b3\u2014^\u00a6\u201e:                                      
+                             \u2018(z\u00f2J\u0063oj>+!\u00af\u00af!|ilo\u2021uJ%u%\u2020\u00ab\u00aa\u00b2\u00b9                                
+                            \u0063\u0033\u2122O\u00dd\u0161\u00f1P\u00c7\u00dd6\u00be\u00fcV\u00cc\u00bdv\u00bd3w\u00fc2\u00a9\u2122a&\u00f42\u00f3z\u0192\u00f2J\u00a1\u00a8                           
+                          \u00a8\u00a2f6\u00ae\u00ddk\u00aeSTO44\u00f4&\u00ce9S94\u00a9\u00a3fUeTT4\u00f9\u2122\u00bexfxx\u00b5\u2030                           
+                         {\u2030s\u00b1\u00a3w\u00cdut\u00ef+\u00ab/)\u00d7ivJ\u00f6\u00a3\u00f4\u00be\u00b5yO9\u0178\u0039\u0039\u00ae\u00e0PZ\u00e4\u00fbSkS\u00f2\u2018                         
+                      \u2026\u00aa\u00a6)=s\u00a9u*\u201c\u2018\u02c6\u00b8\u00b8\u00a8\u2026\u201a\u00b9\u00b3\u201c\u00af\u00ac{<rz\u00f3Y&f\u00beU\u00dd\u00f1b\u00a5FD\u00c7\u00fb\u00e0\u00a7\u00f5\u201c                        
+                    \u00a8\u201c!?\u00ef1z>\u00ba\u02dc           \u02c6\u2018\u00ad\u201c\u00af\u00ac/\u00bf=v\u00ee\u0192\u2030\u00f3aSP\u00f1\u00a5\u00a5\u00e1P\u00e0S\u00e7|                       
+                    \u00abf\u00f2\u00a2s\u00f6\u00ec\u02dc             \u0060\u02c6\u201a\u2018\u2039\u00b9\u00b3\u00a1||)?\u00bf\u20201n5h\u00e5\u00e8\u00e8\u00a5Z\u00e0\u0178\u00f5o                      
+                   \u0060\u00f6\u00f9a\u00f4\u00a9t\u203a              \u2026\u2018\u02dc\u2018\u2018\u2018\u00b9\u201c\u201c\u201c\u00a6\u00a1\u2022{\u00bft3x\u0161\u00d6\u00d9d\u00d3\u00e1FO1                     
+                   \u00b9L\u2122yV\u2030|            \u2026\u2026\u2026\u02c6\u2018:\u203a\u203a\u203a\u2039\u00b2\u201c\u00b2\u201c\u00f7!\u00bb*}*>z\u00a9\u00a7\u00fdeo\u00faG\u00da\u00ff\u00bd                     
+                   \u00f7\u00f2\u00e7Vnr~             \u00a8\u00b8\u02dc\u2018\u2018:;\u201a;\u00ba\u201e\u201c\u201c^\u00a6|///?=\u20305D\u00da\u00df\u00d5\u00d5\u00f02                     
+                   \u00d7\u00e73\u00f3\u00cd\u00ed\u201e               \u00a8\u00b8\u2026\u00a8\u00a8\u02c6\u2018\u00b2~~\u201c^\u00f7\u2022\u2022/*\u20201\u2030&\u00e4\u00dc\u00df\u0160XX\u00eb                     
+                   )\u00cc3OV/\u2018                  \u0060\u02c6\u2018\u201a\u2039\u00b2\u00ba\u201c\u2014\u00a1\u00ab){\u00bfit\u00f9u\u00a3T\u00fdp\u00d4\u00d0\u017dA\u2020                    
+                   +\u00f2\u00a3Tt\u201e\u0060           \u00a8\u0060\u0060\u00a8\u00a8\u2026\u00b4\u2026\u2018\u2018\u00ad\u2013\u2013\u00b3\u201e\u00a6|\u2022/?>\u0076%\u2030\u00cc4\u00e5\u20ac\u00d4\u0160\u017dRf                    
+                   \u00bbUL\u00ddl\u00b7   \u00a8\u201cì\u00a4\u00cfaÎL\u0063\u2020!\u201e\u00b3\u2013\u00b3\u00ba\u00ba\u00d7[>zÌL\u00f3s\u00a2u%rlIu\u00a2n\u2122\u00f1p\u00d4\u0160X\u017d\u00ad                    
+                   \u201e\u00f602\u00ab\u00b4\u2018\u20227\u00ed\u00edvjI\u0192C\u00fc4f\u2122I+\u2022?\u00ee0aU\u00f1\u00e0Ux\u00f4\u00fcf\u017eS\u00e4\u00f1\u00f5\u00f3\u00bdC\u00fc\u00d6\u00dbA\u00db\u00ea\u00d5                     
+                   \u2026v\u00cd\u00ba\u00fai\u201a\u00ad\u2018\u2039\u00ab}i\u00edo\u00f2\u00b1\u00f32y4\u00a3\u00b1Y&\u00dd\u00ffUe\u00ce\u00cd\u0192%J\u0192z\u00f2wyS\u00deA\u0160\u00deGXKK\u0160z                     
+                    i\u00d6\u00ae5^\u00b2!|J\u00f65f\u00fc\u00ddP9Ty2\u00c7\u00e5\u00f1\u00ff\u00deh\u0066S\u00ae\u00aePÙF\u00dd5\u00cex\u00fc\u00f4e\u00fb\u00d6\u00ae\u00eb\u0160\u017d\u00c4\u00ea\u00a5\u00f3\u00b3                    
+                  !1=Ytu\u0060 \u02dc\u00acì)\u00ab{\u00b4it¤\u0063is\u00f1@(\u00ec\u0161b5\u00a2\u00a9Vz\u00bdJ3x\u00f1\u00e9\u00a7\u00f9\u00a9\u00f5\u00ceu&dq\u00e3\u00ff\u00e09\u00f4\u00ba                   
+                 \u02c6t\u2020~=\u2026\u201c\u00b9   \u2018\u201c)>\u00a4\u00f2\u00a2\u0063>>\u00fa\u00ab\u2026\u2018\u2014<\u00eb\u00cd3o\u00f6n\u2030z\u00bc\u00f6C3C\u00bdJ\u00ce\u00fc\u00cc\u00b1UGb&\u00f5O0\u00ec                   
+                  \u00d7+\u203a\u00ef  %    \u2018\u00b2\u201e\u00aa\u2014\u00aa\u201e^s+  \u00b8\u00aa}Jd\u00bc>**\u00ef\u00ee<\u00d7\u2022|+}i\u00a3u\u00a4\u00f2\u00a9Gk\u00f6\u00cd\u00fc\u00cf\u201c                   
+                  \u00b2\u00bb\u00ad^   ;\u0060\u00bb\u00ef>?\u00d771J\u00ee\u00bd!   ;|?ll\u00c7\u00e4\u00b5\u00cf=*}\u00efIs\u00b1\u00a2\u00bcj>\u0063\u00f6\u00fa\u00d9ku\u00ccJ^                    
+                   \u00a8\u00a8\u00b8     \u2018\u00ba\u2014*rIzr\u00f7\u203a   \u2026\u2039\u00ab{\u00bc\u00a2\u2030\u00a2\u00bc1llll\u00eeoIcvìì\u0049C\u00ceT&1J\u00a6                     
+                    \u2026   \u2026\u201a\u2018\u00b0^\u00bb\u00ef\u20213\u00a2|     \u2026\u00ad\u00bb7=(|<\u00cci*\u2022\u201c\u00b0\u00b0\u201c!(?i1\u01923\u00fa\u00f5zz\u00ed                      
+                       \u2018\u00b0^\u00ab\u2020\u0063\u00bd\u00a9a%7\u00ec\u00eel)\u00ab/\u00bbits\u00cfs3\u00f9\u00fa\u0192@V%\u2020*\u00bfi<<l\u00a4\u00a2\u00cd6Y>}\u00d7                      
+                      \u00b4\u2039\u201e{\u00edI\u00cfyal\u00d7{\u00d7\u00eclz0\u2122\u00f4\u00ae\u00d2\u00e88\u00de\u00e1\u00be\u00bdj\u00eer\u0073\u00a9s%t%z\u00bd\u00f2\u00cc\u00a9O\u00cd\u00efi1                      
+                      \u02dc\u201c\u00ac>r@xf\u00a4i\u00bb\u00a6\u00f7|\u00f7+[rCÌu\u0192\u00bd\u00f2\u2030j\u00ef\u00ec\u00ef1cI\u00a4%\u0192\u00bc\u00f2\u00f33V\u2122y\u2122\u00bdn                       
+                      \u201a\u00aa\u20227\u00ed\u00ee%v\u00bd\u00fc\u00cct=>ii{|\u2022\u2022/vIInn3w2\u00cd\u00f2\u00ee\u00ed1\u00ee\u0192\u00a2\u00f3\u00cd\u00f9\u00ceV\u201a                         
+                      \u02dc~!{}?*)^|@\u0178j \u00b8    \u00b0 \u00a8\u00b9\u00b7v\u00bfe\u00d4\u00e1\u2030{\u00ab\u00d7(?\u00ee\u00f2\u00cdwa\u00b5\u00a1                          
+                     ^\u00bb\u00ad\u201e\u00f7\u2022\u2022\u00bb\u00ac\u2014~\u201c(\u00ed?|\u203a\u0060     \u02c6\u2018<\u00bd\u00a2Jv{}[>\u00d7\u00ecz@\u00b1w\u00b5\u00bc\u00a8                          
+                \u00a6\u00ees04\u00faai\u00aa\u00a1|\u00f7\u2014\u201e\u00b2\u2039:\u00b9~\u00af\u2022{+{(\u00bb{\u00ed\u00bcJ\u00bd\u00bcn=*?>>><z\u00f6@3f\u0178\u00f7                           
+              r\u00f56Tye\u0055fef\u0192\u00a1!\u00a6\u201c\u00b0\u2018\u02c6\u2018\u2018:\u00b0\u00aa(7\u00ec==ljj\u00eeJ\u0192\u0063j<//\u2022\u00ac=\u2030C\u00a9eP\u00be\u2014                           
+            \u201et\u2030\u00b1Y\u00f9\u21222\u00faa\u0061\u00f4y\u00a2\u00a1\u00f7\u201e\u2013\u2018\u00b4\u0060\u2026\u00b8\u2018;\u00b3\u00a6\u00ab\u00d7>[?*}7\u2020\u2020(\u2022(\u00d771\u0192s09\u00d2gQ\u00c0\u00e1l                         
+   \u00b4      \u2018(}\u00edzs\u007a\u2021@\u00b1\u00f6\u00a9y\u00b5\u00ae\u01785<\u00a6\u00b2;\u00a8   \u0060\u00a8\u00b8\u2018\u00ad~\u201c\u201c\u201c\u201c\u2014\u00af\u00a6\u00af^/<\u00ee\u00bc@V\u00f5h\u00d3\u00de\u0153W#H\u0153\u00da\u2030\u02c6                      
+\u00bf[*!\u2022)/\u2022^\u00d7wf\u00b1o\u2030\u00cf\u2030\u00a4\u2030\u00bcCw6O\u00e0Pb\u005a\u00a2\u2022\u00a6\u00b2\u2026   \u0060\u00b8\u201a:;\u2039\u2039\u00b0\u201c^\u00f7^\u00ac\u00d71\u00a23w\u00ce\u00c7\u00e8d\u00e5\u00e9\u00c4\u00e6\u00c4\u00d0\u00d0\u00d4\u0160\u00d6\u2018                     
+@Coo%\u00bd\u00f2\u00bd\u00bc\u00bc\u00a39\u00e1P\u00ae2\u00b1\u2122uC\u00cf\u00f3&x\u00ae\u00c7\u00fd\u00f8Di<}|\u201c\u203a\u201a\u201a\u2018\u2039\u00b0\u00b2\u00b2\u00b3\u00aa\u00f7)(*13f4\u00b5\u0161\u00d6\u00ebdå\u00e1\u00df\u00c5\u00c1\u017d\u00d4\u20ac\u00df\u00e2G\u00f8\u00a2\u00b7                   
+Jtil\u00f2L\u00b13C\u00a2\u2030u\u00a3\u00c7\u00dfp\u00fd\u00f1\u01616\u00a3\u00e70a\u00ce\u00a5\u00b6\u00f8\u00b5\u201c{\u2021\u00f6\u00a2c[*+)((((*\u2020v\u0192V9\u00d6F\u00a5\u00e8\u00d9\u00fd\u00d6D\u0161k\u00e2#\u00c1\u017d\u00ea\u00dbA\u00e2\u00e9\u00b6\u00e9\u00f5;                  
+\u00f9C\u00edI\u00a9\u21226\u00fc\u00b13\u00ccC2Z\u00d0B\u00c2\u00c5\u00eabx\u00e7\u00be\u00be\u2122S\u00d2\u00cd\u00b3\u00b3\u00d7\u2030\u00f9fye6\u00ce\u00f54f\u00f5OS\u0068\u00d38\u00f0\u00f0G\u00f0\u00eb\u00d3bP\u00dd\u00aeT$KHX\u0153\u00ea\u00d5\u00f8\u00e9\u00d3d\u00f0\u00a5\u2018                 
+\u00f4@%\u00cf\u212245\u00a9Y\u00cd3w\u00e72\u00f4\u0178GK\u00ea\u00b6\u20ac\u00eaw6Yhf\u00e7\u2021\u00ba\u2039\u201c(\u00ed\u2030&9Pb\u00de\u00e8\u00d9\u00da\u00e9\u00f0\u00f0\u00f0\u00e9\u00dad\u00d3\u00ffP\u00fb\u0178\u00ae9TU\u00ebg\u00d0\u00ea\u00ea\u00d4m\u00f8\u00b6\u00eb\u00dad\u00a5f!\u2018               
+O3\u2030\u00a3w&44\u00b1\u00f6@\u00cd\u00cc\u00cc0aTd\u00e3\u00d3\u00a5\u00e1kYk\u00a3bFc\u201c\u2039\u00b3|*7v\u00bd\u00b1\u2122\u00ceU\u00ddh\u0161PD\u00a5b\u00f1\u0161\u0178Ty\u00b56\u00b5TT\u00ae\u00eb\u00ea\u00d0pp\u00d4\u00e2\u00eb\u00da$\u00de\u00d6\u00e5\u00f1\u00a5b\u00f9\u2013             
+\u00c7s\u0192C0\u00ce6y0\u00b13\u00cc\u00f6%\u00bd3\u2122U\u00e1F\u01785S5w&\u00be%O\u00e4n\u2014\u00b2\u201e\u00a6\u00ab(\u00d7<r\u0192sCV\u00fax\u00b5OT4\u00f4\u00f55\u00f5\u00cef4x\u00b5\u00ae$\u00d5\u00d5\u00dfm\u00dc\u00dc\u00dc$b$\u00d2\u00d3\u00d3\u00dc8\u00d9\u2122\u00b7            
+\u00b5s\u00ee\u00f6\u00a9\u00b5\u017ex&Y\u00f6\u0192\u00a2J\u00bc\u00f6\u00cfw9\u00a7Z\u0178\u00dd\u00bef\u0079\u005\u005\u0079y\u00de\u00e9db9\u00cf<\u00ac!+7\u00ef\u00ee\u00bcssCsn\u00a2\u00a2\u00f6\u00a92\u00e722&\u00faO\u00e5G\u00b6\u00dc\u00f0G\u00dc\u00fd\u00d6\u00e8\u00da\u00e9d\u00d9d\u00f0\u00e2h|            
+On\u00a2\u00f6\u00e75\u00b5\u00f5\u00fa\u00fa\u2122Y\u00b13\u00cf\u00f2C\u00b1\u00a3\u00fa5y6\u00a7\u00dd\u00dd\u00a5\u00fd\u017e\u00f5\u00f5\u00e1$\u00f0G\u00e3m\u00e3G\u00f8\u00f0\u00ebb\u00dda%\u00ef\u00ed1\u00eeJ\u00ccn\u00f2\u00f6@\u00ccV4LtoaÝ$d\u00f0\u00f0\u00eb\u00d6\u00d6\u00d3\u00daG\u00f8\u00ebZ\u00f9\u00ac           
+6\u00b1\u00f3u\u00fckkõ0VYw\u00a9\u00a90L\u00a9\u00e7\u00f9\u00cf@\u2122\u00bekš\u00ffh\u00a7F\u00d66\u00cd\u00be\u00d3\u00e3m\u00e3\u00e2\u00e3\u20ac\u00d4\u0160\u00db\u0160q\u00ea\u00ea\u20ac\u00e9\u00e5\u00fb5sc\u00eeI\u0192\u20306d\u00dc\u00a53@yh\u005adf\u00d6\u00d2\u00d3$\u00b6\u00df\u0160\u00d5A\u00e10\u00f3\u00cdV\u00b1\u0192+\u00b9   
+f\u00bdzLf&4\u00f9\u00cfu\u00a2\u00f6\u00f6\u00f63\u00a35\u017e\u00fbf\u2122\u2122\u00f9\u00b1\u00e7&\u00aeFF\u00e0ZO\u00e7T\u00ff\u00d3\u00f0\u0160\u0160A\u00d4\u00dbqgX\u0153XX\u0153\u0153\u017e\u017e\u0153g\u00db\u20ac\u00e2\u00b6G\u00b6\u00f0\u00dc\u0064\u00fd\u017e\u00fc\u00e4\u00daR\u00fe##\u00e6#\u00fe\u017e\u00d5\u00da\u00c7\u00bea4\u00ae\u00d2\u00f0\u00df\u20ac\u00e8\u00cc\u00b0
+C%\u00bd\u00cfayx0\u00f2\u00bd\u2030\u00bd\u2030\u2030u\u00b1\u00f5\u00a7\u00aefu\u00f4\u00fcLw\u00f2\u00a9\u00fb\u00d2\u00d2b\u00e1\u00be\u00a96\u00f1\u00a7Z\u00e9\u00ea\u0153\u00d0XKRH\u00c0HR\u017e\u0153X\u00d0q\u00ea\u00d0gq\u00f8\u00e8Dy\u00ce\u00dd\u00e9\u00c4\u00e6BQB#Hg\u00d5G\u00ebb\u00a7UU\u0178\u00a5\u00dfE\u00fe\u00ea\u00fdZb$
+CIu\u00cd\u00f4\u00ce9f\u00e70L\u00f9\u00a9\u00cd\u00b1\u00a9\u00ce\u00aeS\u0066\u00f4\u00a95\u00f5\u00be&x\u00dd\u00b5T\u00e0bk\u00a9\u00a9P\u00d9\u00f1\u00f1\u00ff$\u00e3\u00d5\u0153RH\u00c0\u00c0\u00c4Xq\u00dbgggg\u0160\u00dahTO\u00a5\u00dfK\u00fe\u00c1NN\u00c1X\u00f0$\u00da$\u00de\u00a5\u0161\u0178\u017e\u00a7D\u00b6Eg$\u00e5\u00d38\u00df\u00d5`;
+
+    document.getElementById('ascii-art').textContent = ASCII_ART;
+
+    // Fit ascii font size to the card width on every resize
+    function fitAscii() {
+      const pre = document.getElementById('ascii-art');
+      const wrapper = pre.closest('.ascii-wrapper');
+      if (!wrapper || !pre) return;
+      const avail = wrapper.clientWidth - 4;
+      // Count max chars per line
+      const lines = pre.textContent.split('\n');
+      const maxCols = Math.max(...lines.map(l => l.length));
+      if (maxCols === 0) return;
+      // Compute target px per char then convert to font-size
+      // JetBrains Mono ch ≈ 0.60 × font-size
+      const pxPerChar = avail / maxCols;
+      const fs = Math.max(1.8, Math.min(pxPerChar / 0.60, 8));
+      pre.style.fontSize = fs + 'px';
+    }
+
+    window.addEventListener('load',   fitAscii);
+    window.addEventListener('resize', fitAscii);
+  </script>
+</body>
+</html>
