@@ -135,31 +135,49 @@
       border-radius: 24px;
       border: 2px solid var(--electric-border-color);
       margin-top: -4px; margin-left: -4px;
+      position: relative;
+      /* No filter here — Safari flickers when displacing bordered elements */
+    }
+    /* Turbulence applied to a borderless overlay so Safari stays stable */
+    .main-card::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 24px;
+      border: 2px solid var(--electric-border-color);
       filter: url(#turbulent-displace);
+      pointer-events: none;
+      /* isolate the filter on its own layer */
+      will-change: filter;
+      transform: translateZ(0);
     }
     .glow-layer-1 {
       border: 2px solid color(display-p3 0.196 0.161 0.745 / 0.6);
       border-radius: 24px; width: 100%; height: 100%;
       position: absolute; inset: 0; filter: blur(1px);
+      transform: translateZ(0); will-change: filter;
     }
     .glow-layer-2 {
       border: 2px solid var(--electric-light-color);
       border-radius: 24px; width: 100%; height: 100%;
       position: absolute; inset: 0; filter: blur(4px);
+      transform: translateZ(0); will-change: filter;
     }
     .overlay-1 {
       position: absolute; inset: 0; border-radius: 24px;
-      opacity: 1; mix-blend-mode: overlay; transform: scale(1.1); filter: blur(16px);
+      opacity: 1; mix-blend-mode: overlay; filter: blur(16px);
       background: linear-gradient(-30deg, white, transparent 30%, transparent 70%, white);
+      transform: translateZ(0);
     }
     .overlay-2 {
       position: absolute; inset: 0; border-radius: 24px;
-      opacity: 0.5; mix-blend-mode: overlay; transform: scale(1.1); filter: blur(16px);
+      opacity: 0.5; mix-blend-mode: overlay; filter: blur(16px);
       background: linear-gradient(-30deg, white, transparent 30%, transparent 70%, white);
+      transform: translateZ(0);
     }
     .background-glow {
       position: absolute; inset: 0; border-radius: 24px;
-      filter: blur(32px); transform: scale(1.1); opacity: 0.28; z-index: -1;
+      filter: blur(32px); transform: scale(1.1); opacity: 0.3; z-index: -1;
       background: linear-gradient(-30deg, var(--electric-light-color), transparent, var(--electric-border-color));
     }
 
