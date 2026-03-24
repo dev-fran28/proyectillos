@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>f-gc.dev</title>
+  <meta name="robots" content="noindex, nofollow, noarchive, nocache" />
+  <meta name="googlebot" content="noindex, noarchive" />
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet" />
@@ -200,7 +203,7 @@
       font-size: 4px;
       line-height: 1.18;
       white-space: pre;
-      color: color(display-p3 0.72 0.68 0.98);
+      color: color(display-p3 0.749 0.886 0.271);
       opacity: 0.85;
       letter-spacing: 0;
       display: block;
@@ -467,53 +470,54 @@
     // ASCII portrait — embedded directly, no fetch needed
     const ASCII_ART = `                                                                                          
                                                                                           
-                                   \u00a8\u201a\u2018\u2018\u2018\u00a8\u00a8\u00a8\u00b8\u2018\u2013\u00b3\u2014^\u00a6\u201e:                                      
-                             \u2018(z\u00f2J\u0063oj>+!\u00af\u00af!|ilo\u2021uJ%u%\u2020\u00ab\u00aa\u00b2\u00b9                                
-                            \u0063\u0033\u2122O\u00dd\u0161\u00f1P\u00c7\u00dd6\u00be\u00fcV\u00cc\u00bdv\u00bd3w\u00fc2\u00a9\u2122a&\u00f42\u00f3z\u0192\u00f2J\u00a1\u00a8                           
-                          \u00a8\u00a2f6\u00ae\u00ddk\u00aeSTO44\u00f4&\u00ce9S94\u00a9\u00a3fUeTT4\u00f9\u2122\u00bexfxx\u00b5\u2030                           
-                         {\u2030s\u00b1\u00a3w\u00cdut\u00ef+\u00ab/)\u00d7ivJ\u00f6\u00a3\u00f4\u00be\u00b5yO9\u0178\u0039\u0039\u00ae\u00e0PZ\u00e4\u00fbSkS\u00f2\u2018                         
-                      \u2026\u00aa\u00a6)=s\u00a9u*\u201c\u2018\u02c6\u00b8\u00b8\u00a8\u2026\u201a\u00b9\u00b3\u201c\u00af\u00ac{<rz\u00f3Y&f\u00beU\u00dd\u00f1b\u00a5FD\u00c7\u00fb\u00e0\u00a7\u00f5\u201c                        
-                    \u00a8\u201c!?\u00ef1z>\u00ba\u02dc           \u02c6\u2018\u00ad\u201c\u00af\u00ac/\u00bf=v\u00ee\u0192\u2030\u00f3aSP\u00f1\u00a5\u00a5\u00e1P\u00e0S\u00e7|                       
-                    \u00abf\u00f2\u00a2s\u00f6\u00ec\u02dc             \u0060\u02c6\u201a\u2018\u2039\u00b9\u00b3\u00a1||)?\u00bf\u20201n5h\u00e5\u00e8\u00e8\u00a5Z\u00e0\u0178\u00f5o                      
-                   \u0060\u00f6\u00f9a\u00f4\u00a9t\u203a              \u2026\u2018\u02dc\u2018\u2018\u2018\u00b9\u201c\u201c\u201c\u00a6\u00a1\u2022{\u00bft3x\u0161\u00d6\u00d9d\u00d3\u00e1FO1                     
-                   \u00b9L\u2122yV\u2030|            \u2026\u2026\u2026\u02c6\u2018:\u203a\u203a\u203a\u2039\u00b2\u201c\u00b2\u201c\u00f7!\u00bb*}*>z\u00a9\u00a7\u00fdeo\u00faG\u00da\u00ff\u00bd                     
-                   \u00f7\u00f2\u00e7Vnr~             \u00a8\u00b8\u02dc\u2018\u2018:;\u201a;\u00ba\u201e\u201c\u201c^\u00a6|///?=\u20305D\u00da\u00df\u00d5\u00d5\u00f02                     
-                   \u00d7\u00e73\u00f3\u00cd\u00ed\u201e               \u00a8\u00b8\u2026\u00a8\u00a8\u02c6\u2018\u00b2~~\u201c^\u00f7\u2022\u2022/*\u20201\u2030&\u00e4\u00dc\u00df\u0160XX\u00eb                     
-                   )\u00cc3OV/\u2018                  \u0060\u02c6\u2018\u201a\u2039\u00b2\u00ba\u201c\u2014\u00a1\u00ab){\u00bfit\u00f9u\u00a3T\u00fdp\u00d4\u00d0\u017dA\u2020                    
-                   +\u00f2\u00a3Tt\u201e\u0060           \u00a8\u0060\u0060\u00a8\u00a8\u2026\u00b4\u2026\u2018\u2018\u00ad\u2013\u2013\u00b3\u201e\u00a6|\u2022/?>\u0076%\u2030\u00cc4\u00e5\u20ac\u00d4\u0160\u017dRf                    
-                   \u00bbUL\u00ddl\u00b7   \u00a8\u201cì\u00a4\u00cfaÎL\u0063\u2020!\u201e\u00b3\u2013\u00b3\u00ba\u00ba\u00d7[>zÌL\u00f3s\u00a2u%rlIu\u00a2n\u2122\u00f1p\u00d4\u0160X\u017d\u00ad                    
-                   \u201e\u00f602\u00ab\u00b4\u2018\u20227\u00ed\u00edvjI\u0192C\u00fc4f\u2122I+\u2022?\u00ee0aU\u00f1\u00e0Ux\u00f4\u00fcf\u017eS\u00e4\u00f1\u00f5\u00f3\u00bdC\u00fc\u00d6\u00dbA\u00db\u00ea\u00d5                     
-                   \u2026v\u00cd\u00ba\u00fai\u201a\u00ad\u2018\u2039\u00ab}i\u00edo\u00f2\u00b1\u00f32y4\u00a3\u00b1Y&\u00dd\u00ffUe\u00ce\u00cd\u0192%J\u0192z\u00f2wyS\u00deA\u0160\u00deGXKK\u0160z                     
-                    i\u00d6\u00ae5^\u00b2!|J\u00f65f\u00fc\u00ddP9Ty2\u00c7\u00e5\u00f1\u00ff\u00deh\u0066S\u00ae\u00aePÙF\u00dd5\u00cex\u00fc\u00f4e\u00fb\u00d6\u00ae\u00eb\u0160\u017d\u00c4\u00ea\u00a5\u00f3\u00b3                    
-                  !1=Ytu\u0060 \u02dc\u00acì)\u00ab{\u00b4it¤\u0063is\u00f1@(\u00ec\u0161b5\u00a2\u00a9Vz\u00bdJ3x\u00f1\u00e9\u00a7\u00f9\u00a9\u00f5\u00ceu&dq\u00e3\u00ff\u00e09\u00f4\u00ba                   
-                 \u02c6t\u2020~=\u2026\u201c\u00b9   \u2018\u201c)>\u00a4\u00f2\u00a2\u0063>>\u00fa\u00ab\u2026\u2018\u2014<\u00eb\u00cd3o\u00f6n\u2030z\u00bc\u00f6C3C\u00bdJ\u00ce\u00fc\u00cc\u00b1UGb&\u00f5O0\u00ec                   
-                  \u00d7+\u203a\u00ef  %    \u2018\u00b2\u201e\u00aa\u2014\u00aa\u201e^s+  \u00b8\u00aa}Jd\u00bc>**\u00ef\u00ee<\u00d7\u2022|+}i\u00a3u\u00a4\u00f2\u00a9Gk\u00f6\u00cd\u00fc\u00cf\u201c                   
-                  \u00b2\u00bb\u00ad^   ;\u0060\u00bb\u00ef>?\u00d771J\u00ee\u00bd!   ;|?ll\u00c7\u00e4\u00b5\u00cf=*}\u00efIs\u00b1\u00a2\u00bcj>\u0063\u00f6\u00fa\u00d9ku\u00ccJ^                    
-                   \u00a8\u00a8\u00b8     \u2018\u00ba\u2014*rIzr\u00f7\u203a   \u2026\u2039\u00ab{\u00bc\u00a2\u2030\u00a2\u00bc1llll\u00eeoIcvìì\u0049C\u00ceT&1J\u00a6                     
-                    \u2026   \u2026\u201a\u2018\u00b0^\u00bb\u00ef\u20213\u00a2|     \u2026\u00ad\u00bb7=(|<\u00cci*\u2022\u201c\u00b0\u00b0\u201c!(?i1\u01923\u00fa\u00f5zz\u00ed                      
-                       \u2018\u00b0^\u00ab\u2020\u0063\u00bd\u00a9a%7\u00ec\u00eel)\u00ab/\u00bbits\u00cfs3\u00f9\u00fa\u0192@V%\u2020*\u00bfi<<l\u00a4\u00a2\u00cd6Y>}\u00d7                      
-                      \u00b4\u2039\u201e{\u00edI\u00cfyal\u00d7{\u00d7\u00eclz0\u2122\u00f4\u00ae\u00d2\u00e88\u00de\u00e1\u00be\u00bdj\u00eer\u0073\u00a9s%t%z\u00bd\u00f2\u00cc\u00a9O\u00cd\u00efi1                      
-                      \u02dc\u201c\u00ac>r@xf\u00a4i\u00bb\u00a6\u00f7|\u00f7+[rCÌu\u0192\u00bd\u00f2\u2030j\u00ef\u00ec\u00ef1cI\u00a4%\u0192\u00bc\u00f2\u00f33V\u2122y\u2122\u00bdn                       
-                      \u201a\u00aa\u20227\u00ed\u00ee%v\u00bd\u00fc\u00cct=>ii{|\u2022\u2022/vIInn3w2\u00cd\u00f2\u00ee\u00ed1\u00ee\u0192\u00a2\u00f3\u00cd\u00f9\u00ceV\u201a                         
-                      \u02dc~!{}?*)^|@\u0178j \u00b8    \u00b0 \u00a8\u00b9\u00b7v\u00bfe\u00d4\u00e1\u2030{\u00ab\u00d7(?\u00ee\u00f2\u00cdwa\u00b5\u00a1                          
-                     ^\u00bb\u00ad\u201e\u00f7\u2022\u2022\u00bb\u00ac\u2014~\u201c(\u00ed?|\u203a\u0060     \u02c6\u2018<\u00bd\u00a2Jv{}[>\u00d7\u00ecz@\u00b1w\u00b5\u00bc\u00a8                          
-                \u00a6\u00ees04\u00faai\u00aa\u00a1|\u00f7\u2014\u201e\u00b2\u2039:\u00b9~\u00af\u2022{+{(\u00bb{\u00ed\u00bcJ\u00bd\u00bcn=*?>>><z\u00f6@3f\u0178\u00f7                           
-              r\u00f56Tye\u0055fef\u0192\u00a1!\u00a6\u201c\u00b0\u2018\u02c6\u2018\u2018:\u00b0\u00aa(7\u00ec==ljj\u00eeJ\u0192\u0063j<//\u2022\u00ac=\u2030C\u00a9eP\u00be\u2014                           
-            \u201et\u2030\u00b1Y\u00f9\u21222\u00faa\u0061\u00f4y\u00a2\u00a1\u00f7\u201e\u2013\u2018\u00b4\u0060\u2026\u00b8\u2018;\u00b3\u00a6\u00ab\u00d7>[?*}7\u2020\u2020(\u2022(\u00d771\u0192s09\u00d2gQ\u00c0\u00e1l                         
-   \u00b4      \u2018(}\u00edzs\u007a\u2021@\u00b1\u00f6\u00a9y\u00b5\u00ae\u01785<\u00a6\u00b2;\u00a8   \u0060\u00a8\u00b8\u2018\u00ad~\u201c\u201c\u201c\u201c\u2014\u00af\u00a6\u00af^/<\u00ee\u00bc@V\u00f5h\u00d3\u00de\u0153W#H\u0153\u00da\u2030\u02c6                      
-\u00bf[*!\u2022)/\u2022^\u00d7wf\u00b1o\u2030\u00cf\u2030\u00a4\u2030\u00bcCw6O\u00e0Pb\u005a\u00a2\u2022\u00a6\u00b2\u2026   \u0060\u00b8\u201a:;\u2039\u2039\u00b0\u201c^\u00f7^\u00ac\u00d71\u00a23w\u00ce\u00c7\u00e8d\u00e5\u00e9\u00c4\u00e6\u00c4\u00d0\u00d0\u00d4\u0160\u00d6\u2018                     
-@Coo%\u00bd\u00f2\u00bd\u00bc\u00bc\u00a39\u00e1P\u00ae2\u00b1\u2122uC\u00cf\u00f3&x\u00ae\u00c7\u00fd\u00f8Di<}|\u201c\u203a\u201a\u201a\u2018\u2039\u00b0\u00b2\u00b2\u00b3\u00aa\u00f7)(*13f4\u00b5\u0161\u00d6\u00ebdå\u00e1\u00df\u00c5\u00c1\u017d\u00d4\u20ac\u00df\u00e2G\u00f8\u00a2\u00b7                   
-Jtil\u00f2L\u00b13C\u00a2\u2030u\u00a3\u00c7\u00dfp\u00fd\u00f1\u01616\u00a3\u00e70a\u00ce\u00a5\u00b6\u00f8\u00b5\u201c{\u2021\u00f6\u00a2c[*+)((((*\u2020v\u0192V9\u00d6F\u00a5\u00e8\u00d9\u00fd\u00d6D\u0161k\u00e2#\u00c1\u017d\u00ea\u00dbA\u00e2\u00e9\u00b6\u00e9\u00f5;                  
-\u00f9C\u00edI\u00a9\u21226\u00fc\u00b13\u00ccC2Z\u00d0B\u00c2\u00c5\u00eabx\u00e7\u00be\u00be\u2122S\u00d2\u00cd\u00b3\u00b3\u00d7\u2030\u00f9fye6\u00ce\u00f54f\u00f5OS\u0068\u00d38\u00f0\u00f0G\u00f0\u00eb\u00d3bP\u00dd\u00aeT$KHX\u0153\u00ea\u00d5\u00f8\u00e9\u00d3d\u00f0\u00a5\u2018                 
-\u00f4@%\u00cf\u212245\u00a9Y\u00cd3w\u00e72\u00f4\u0178GK\u00ea\u00b6\u20ac\u00eaw6Yhf\u00e7\u2021\u00ba\u2039\u201c(\u00ed\u2030&9Pb\u00de\u00e8\u00d9\u00da\u00e9\u00f0\u00f0\u00f0\u00e9\u00dad\u00d3\u00ffP\u00fb\u0178\u00ae9TU\u00ebg\u00d0\u00ea\u00ea\u00d4m\u00f8\u00b6\u00eb\u00dad\u00a5f!\u2018               
-O3\u2030\u00a3w&44\u00b1\u00f6@\u00cd\u00cc\u00cc0aTd\u00e3\u00d3\u00a5\u00e1kYk\u00a3bFc\u201c\u2039\u00b3|*7v\u00bd\u00b1\u2122\u00ceU\u00ddh\u0161PD\u00a5b\u00f1\u0161\u0178Ty\u00b56\u00b5TT\u00ae\u00eb\u00ea\u00d0pp\u00d4\u00e2\u00eb\u00da$\u00de\u00d6\u00e5\u00f1\u00a5b\u00f9\u2013             
-\u00c7s\u0192C0\u00ce6y0\u00b13\u00cc\u00f6%\u00bd3\u2122U\u00e1F\u01785S5w&\u00be%O\u00e4n\u2014\u00b2\u201e\u00a6\u00ab(\u00d7<r\u0192sCV\u00fax\u00b5OT4\u00f4\u00f55\u00f5\u00cef4x\u00b5\u00ae$\u00d5\u00d5\u00dfm\u00dc\u00dc\u00dc$b$\u00d2\u00d3\u00d3\u00dc8\u00d9\u2122\u00b7            
-\u00b5s\u00ee\u00f6\u00a9\u00b5\u017ex&Y\u00f6\u0192\u00a2J\u00bc\u00f6\u00cfw9\u00a7Z\u0178\u00dd\u00bef\u0079\u005\u005\u0079y\u00de\u00e9db9\u00cf<\u00ac!+7\u00ef\u00ee\u00bcssCsn\u00a2\u00a2\u00f6\u00a92\u00e722&\u00faO\u00e5G\u00b6\u00dc\u00f0G\u00dc\u00fd\u00d6\u00e8\u00da\u00e9d\u00d9d\u00f0\u00e2h|            
-On\u00a2\u00f6\u00e75\u00b5\u00f5\u00fa\u00fa\u2122Y\u00b13\u00cf\u00f2C\u00b1\u00a3\u00fa5y6\u00a7\u00dd\u00dd\u00a5\u00fd\u017e\u00f5\u00f5\u00e1$\u00f0G\u00e3m\u00e3G\u00f8\u00f0\u00ebb\u00dda%\u00ef\u00ed1\u00eeJ\u00ccn\u00f2\u00f6@\u00ccV4LtoaÝ$d\u00f0\u00f0\u00eb\u00d6\u00d6\u00d3\u00daG\u00f8\u00ebZ\u00f9\u00ac           
-6\u00b1\u00f3u\u00fckkõ0VYw\u00a9\u00a90L\u00a9\u00e7\u00f9\u00cf@\u2122\u00bekš\u00ffh\u00a7F\u00d66\u00cd\u00be\u00d3\u00e3m\u00e3\u00e2\u00e3\u20ac\u00d4\u0160\u00db\u0160q\u00ea\u00ea\u20ac\u00e9\u00e5\u00fb5sc\u00eeI\u0192\u20306d\u00dc\u00a53@yh\u005adf\u00d6\u00d2\u00d3$\u00b6\u00df\u0160\u00d5A\u00e10\u00f3\u00cdV\u00b1\u0192+\u00b9   
-f\u00bdzLf&4\u00f9\u00cfu\u00a2\u00f6\u00f6\u00f63\u00a35\u017e\u00fbf\u2122\u2122\u00f9\u00b1\u00e7&\u00aeFF\u00e0ZO\u00e7T\u00ff\u00d3\u00f0\u0160\u0160A\u00d4\u00dbqgX\u0153XX\u0153\u0153\u017e\u017e\u0153g\u00db\u20ac\u00e2\u00b6G\u00b6\u00f0\u00dc\u0064\u00fd\u017e\u00fc\u00e4\u00daR\u00fe##\u00e6#\u00fe\u017e\u00d5\u00da\u00c7\u00bea4\u00ae\u00d2\u00f0\u00df\u20ac\u00e8\u00cc\u00b0
-C%\u00bd\u00cfayx0\u00f2\u00bd\u2030\u00bd\u2030\u2030u\u00b1\u00f5\u00a7\u00aefu\u00f4\u00fcLw\u00f2\u00a9\u00fb\u00d2\u00d2b\u00e1\u00be\u00a96\u00f1\u00a7Z\u00e9\u00ea\u0153\u00d0XKRH\u00c0HR\u017e\u0153X\u00d0q\u00ea\u00d0gq\u00f8\u00e8Dy\u00ce\u00dd\u00e9\u00c4\u00e6BQB#Hg\u00d5G\u00ebb\u00a7UU\u0178\u00a5\u00dfE\u00fe\u00ea\u00fdZb$
-CIu\u00cd\u00f4\u00ce9f\u00e70L\u00f9\u00a9\u00cd\u00b1\u00a9\u00ce\u00aeS\u0066\u00f4\u00a95\u00f5\u00be&x\u00dd\u00b5T\u00e0bk\u00a9\u00a9P\u00d9\u00f1\u00f1\u00ff$\u00e3\u00d5\u0153RH\u00c0\u00c0\u00c4Xq\u00dbgggg\u0160\u00dahTO\u00a5\u00dfK\u00fe\u00c1NN\u00c1X\u00f0$\u00da$\u00de\u00a5\u0161\u0178\u017e\u00a7D\u00b6Eg$\u00e5\u00d38\u00df\u00d5`;
+                                   ¨‚’’’¨¨¨¸’–³—^¦„:                                      
+                             ’(zòJcoj>+!¯¯!|ilo‡uJ%u%†«ª²¹                                
+                            c3™OÝšñPÇÝ6¾üVÌ½v½3wü2©™a&ô2ózƒòJ¡¨                           
+                          ¨¢f6®Ýk®STO44ô&Î9S94©£fUeTT4ù™¾xfxxµ‰                           
+                         {‰s±£wÍutï+«/)×ivJö£ô¾µyO9Ÿ99®àPZäûSkSò’                         
+                      …ª¦)=s©u*“’ˆ¸¸¨…‚¹³”¯¬{<rzóY&f¾UÝñb¥FDÇûà§õ”                        
+                    ¨”!?ï1z>º˜           ˆ’­“¯¬/¿=vîƒ‰óaSPñ¥¥áPàSç|                       
+                    «ƒò¢söì˜             \`ˆ‚’‹¹³¡||)?¿†1n5håèè¥ZàŸõo                      
+                   \`öùaô©t›              …’˜’’‘¹”””¦¡•{¿ït3xšÖÙdÓáFO1                     
+                   ¹L™yV‰|            ………ˆ’:›››‹²”²”÷!»*}*>z©§ýéøGÚÿ½                     
+                   ÷òçVnr~             ¨¸˜‘‘:;‚;º„””^¦|///?=‰5DÚßÕÕð2                     
+                   ×ç3óÍí„               ¨¸…¨¨ˆ‘²~~“^÷••/*†1‰&äÜßŠXXë                     
+                   )Ì3OV/’                  \`ˆ’‚‹²º”—¡«){¿ítu£TýpÔÐŽA†                    
+                   +ò£Tt„\`           ¨\`\`¨¨…´…’‘­––³„¦|•/?>v%‰Ì4å€ÔŠŽRƒ                    
+                   »uLÝl·   ¨“ì¤ÏaÎLc†!„³–³ºº×[>zÌLós¢u%rlIu¢n™ñpÔŠXŽ­                    
+                   „ö02«´’•7íívjIƒCü4f™I+•?î0aUñàUxôüfžSäñõó½CüÖÛAÛêÕ                     
+                   …vÍºúi‚­‘‹«}iíoò±ó2y4£±Y&ÝÿUeÎÍƒ%JƒzòwySÞAŠÞGXKKŠz                     
+                    iÖ®5^²!|Jö5füÝP9Ty2ÇåñÿÞhfS®®PÙFÝ5ÎxüôeûÖ®ëŠŽÄê¥ó³                    
+                  !1=Ytu\` ˜¬ì)«{?ít¤cisñ@(ìšb5¢©Vz½J3xñé§ù©õÎü&dqãÿà9ôº                   
+                 ˆt†~=…“¹   ‘“)>¤ò¢c>>ú«…’—<ëÍ3oön‰z¼öC3C½JÎüÌ±UGb&õO0ì                   
+                  ×+›ï  %    ’²„ª—ª„^s+  ¸ª}Jd¼>**ïî<×•|+}i£u¤ò©GköÍüÏ“                   
+                  ²»­^   ;\`»ï>?×71Jî½!   ;|?llÇäµÏ=*}ïIs±¢¼j>cöúÙkuÌJ^                    
+                   ¨¨¸     ‘º—*rIzr÷›   …‹«{¼¢‰¢¼1llllîoIcvììICÎT&1J¦                     
+                    …   …‚‘°^»ï‡3¢|     …­»7=(|<Ìi*•”°°”!(?i1ƒ3úõzzí                      
+                       ‘°^«†c½©a%7ìîl)«/»itsÏs3ùúƒ@V%†*¿i<<l¤¢Í6Y>}×                      
+                      ´‹„{íIÏyal×{×ìlz0™ô®Òè8Þá¾½jîrs©s%t%z½òÌ©OÍïi1                      
+                      ˜“¬>r@xf¤i»¦÷|÷+[rCÌuƒ½ò‰jïìï1cI¤%ƒ¼òó3V™y™½n                       
+                      ‚ª•7íî%v½üÌt=>ii{|••/vIInn3w2Íòîí1îƒ¢óÍùÎV‚                         
+                      ˜~!{}?*)^|@Ÿj ¸    ° ¨¹·v¿eÔá‰{«×(?îòÍwaµ¡                          
+                     ^»­„÷••»¬—~”(í?|›\`     ˆ‘<½¢Jv{}[>×ìz@±wµ¼¨                          
+                ¦îs04úaìª¡|÷—„²‹:¹~¯•{+{(»{í¼J½¼n=*?>>><zö@3fŸ÷                           
+              rõ6TyeUfefƒ¡!¦“°‘ˆ’‘:°ª(7ì==ljjîJƒcj<//•¬=‰C©eP¾—                           
+            „t‰±Yù™2úaaôy¢¡÷„–’´\`…¸’;³¦«×>[?*}7††(•(×71ƒs09ÒgQÀál                         
+   ´      ’(}ízsz‡@±ö©yµ®Ÿ5<¦²;¨   \`¨¸‘­~“““”—¯¦¯^/<î¼@VõhÓÞœW#HœÚ‰ˆ                      
+¿[*!•)/•^×wf±o‰Ï‰¤‰¼Cw6OàPbZ¢•¦²…   \`¸‚:;‹‹°”^÷^¬×1¢3wÎÇèdåéÄæÄÐÐÔŠÖ’                     
+@Coo%½ò½¼¼£9áP®2±™uCÏó&x®ÇýøDi<}|”›‚‚’‹°²²³ª÷)(*13f4µšÖëdåáßÅÁŽÔ€ßâGø¢·                   
+JtilòL±3C¢‰u£Çßpýñš6£ç0aÎ¥¶øµ“{‡ö¢c[*+)((((*†vƒV9ÖF¥èÙýÖDškâ#ÁŽêÛAâé¶éõ;                  
+ùCíI©™&5ü±3ÌC2ZÐBÂÅêbxç¾¾™SÒÍ³³×‰ùfye6Îõ4fõOShÓ8ððGðëÓbPÝ®T$KHXœêÕøéÓdð¥‘                 
+ô@%Ï™45©YÍ3wç2ôŸGKê¶€êw6Yhfç‡º‹”(í‰&9PbÞèÙÚéðððéÚdÓÿPûŸ®9TUëgÐêêÔmø¶ëÚd¥f!’               
+O3‰£w&44±ö@ÍÌÌ0aTdãÓ¥ákYk£bFc”‹³|*7v½±™ÎUÝhšPD¥bñšŸTyµ6µTT®ëêÐppÔâëÚ$ÞÖåñ¥bù–             
+ÇsƒC0Î6y0±3Ìö%½3™UáFŸS5w&¾%Oän—²„¦«(×<rƒsCVúxµOT4ôõ5õÎf4xµ®$ÕÕßmÜÜÜ$b$ÒÓÓÜ8Ù™·            
+µsîö©µžx&Yöƒ¢J¼öÏw9§ZŸÝ¾fy55yÞédb9Ï<¬!+7ïî¼ssCsn¢¢ö©2ç22&úOåG¶ÜðGÜýÖèÚédÙdðâh|            
+On¢öç5µõúú™Y±3ÏòC±£ú5y6§ÝÝ¥ýžõõá$ðGãmãGøðëbÝa%ïí1îJÌnòö@ÌV4Ltoaý$dððëÖÖÓÚGøëZù¬           
+6±óuükkõ0VYw©©0L©çùÏ@™¾kšÿh§FÖ6Í¾Óãmãâã€ÔŠÛŠqêê€éåû5scîIƒ‰6dÜ¥3@yhZdFÖÒÓ$¶ßŠÕAá0óÍV±ƒ+¹   
+f½zLf&4ùÏu¢ööó3£5žûf™™ù±ç&®FFàZOçTÿÓðŠŠAÔÛqgXœXXœœŽŽœgÛ€â¶G¶ðÜdýžüäÚRþ##æ#þŽÕÚÇ¾a4®Òðß€èÌ°
+C%½Ïayx0ò½‰½‰‰u±õ§®füôüLwò©ûÒÒbá¾©6ñ§ZéêœÐXKRHÀHRŽœXÐqêÐgqøèDyÎÝéÄæBQB#HgÕGëb§UUŸ¥ßEþêýZb$
+CIuÍôÎ9fç0Lù©Í±©Î®Sfô©5õ¾&xÝµTàbk©©PÙññÿ$ãÕœRHÀÀÄXqÛggggŠÚhTO¥ßKþÁNNÁXð$Ú$Þ¥šŸž§D¶Eg$åÓ8ßÕ
+`;
 
     document.getElementById('ascii-art').textContent = ASCII_ART;
 
@@ -536,6 +540,7 @@ CIu\u00cd\u00f4\u00ce9f\u00e70L\u00f9\u00a9\u00cd\u00b1\u00a9\u00ce\u00aeS\u0066
 
     window.addEventListener('load',   fitAscii);
     window.addEventListener('resize', fitAscii);
+
   </script>
 </body>
 </html>
