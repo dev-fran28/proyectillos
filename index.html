@@ -23,8 +23,9 @@
       --accent-bright: color(display-p3 0.38  0.32  0.94);
       /* #c7e44c lime accent */
       --lime: color(display-p3 0.749 0.886 0.271);
-      --card-w: 580px;
-      --card-h: 700px;
+      --anim-state: running;
+      --card-w: min(560px, 48vw);
+      --card-h: min(700px, calc(100vh - 280px));
     }
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -72,11 +73,14 @@
     /* Side-by-side hero layout */
     .hero-split {
       max-width: 1100px; margin: 0 auto;
-      padding: 80px 48px 60px;
+      padding: clamp(40px, 5vh, 80px) 48px clamp(32px, 4vh, 60px);
       display: grid;
       grid-template-columns: 1fr auto;
       align-items: center;
-      gap: 64px;
+      gap: clamp(32px, 4vw, 64px);
+      /* ensure the whole hero + card fits without scroll */
+      min-height: calc(100vh - 72px);
+      box-sizing: border-box;
     }
     .hero-text {
       display: flex; flex-direction: column; gap: 0;
@@ -146,7 +150,7 @@
     .inner-container { position: relative; }
 
     .border-outer {
-      border: 2px solid color(display-p3 0.196 0.161 0.745 / 0.5);
+      border: 2px solid transparent;
       border-radius: 24px; padding-right: 4px; padding-bottom: 4px;
     }
     .main-card {
@@ -154,35 +158,60 @@
       max-width: calc(100% - 8px);
       height: var(--card-h);
       border-radius: 24px;
-      border: 2px solid var(--electric-border-color);
+      border: 2px solid transparent;
       margin-top: -4px; margin-left: -4px;
       position: relative;
-      /* No filter here — Safari flickers when displacing bordered elements */
+      /* Static border transparent — only ::after animated border is visible */
     }
     /* Turbulence applied to a borderless overlay so Safari stays stable */
+    @keyframes electricPulse {
+      0%   { border-color: color(display-p3 0.737 0.769 1.0);
+              box-shadow: 0 0 8px 2px color(display-p3 0.737 0.769 1.0 / 0.6),
+                          0 0 24px 6px color(display-p3 0.737 0.769 1.0 / 0.3); }
+      50%  { border-color: color(display-p3 0.937 0.949 1.0);
+              box-shadow: 0 0 16px 4px color(display-p3 0.937 0.949 1.0 / 0.85),
+                          0 0 48px 12px color(display-p3 0.737 0.769 1.0 / 0.45); }
+      100% { border-color: color(display-p3 0.737 0.769 1.0);
+              box-shadow: 0 0 8px 2px color(display-p3 0.737 0.769 1.0 / 0.6),
+                          0 0 24px 6px color(display-p3 0.737 0.769 1.0 / 0.3); }
+    }
     .main-card::after {
       content: '';
       position: absolute;
       inset: -2px;
       border-radius: 24px;
-      border: 2px solid var(--electric-border-color);
+      /* Bright animated border — independent of the static base border */
+      border: 2px solid color(display-p3 0.737 0.769 1.0);
       filter: url(#turbulent-displace);
       pointer-events: none;
-      /* isolate the filter on its own layer */
       will-change: filter;
       transform: translateZ(0);
+      animation: electricPulse 2.4s ease-in-out infinite;
+      animation-play-state: var(--anim-state);
+    }
+    @keyframes glowPulse1 {
+      0%, 100% { border-color: color(display-p3 0.737 0.769 1.0 / 0.5); }
+      50%       { border-color: color(display-p3 0.937 0.949 1.0 / 0.9); }
+    }
+    @keyframes glowPulse2 {
+      0%, 100% { border-color: color(display-p3 0.737 0.769 1.0 / 0.7); }
+      50%       { border-color: color(display-p3 0.937 0.949 1.0 / 1.0); }
     }
     .glow-layer-1 {
-      border: 2px solid color(display-p3 0.196 0.161 0.745 / 0.6);
+      border: 2px solid color(display-p3 0.737 0.769 1.0 / 0.5);
       border-radius: 24px; width: 100%; height: 100%;
       position: absolute; inset: 0; filter: blur(1px);
       transform: translateZ(0); will-change: filter;
+      animation: glowPulse1 2.4s ease-in-out infinite;
+      animation-play-state: var(--anim-state);
     }
     .glow-layer-2 {
-      border: 2px solid var(--electric-light-color);
+      border: 2px solid color(display-p3 0.737 0.769 1.0 / 0.7);
       border-radius: 24px; width: 100%; height: 100%;
       position: absolute; inset: 0; filter: blur(4px);
       transform: translateZ(0); will-change: filter;
+      animation: glowPulse2 2.4s ease-in-out infinite 0.4s;
+      animation-play-state: var(--anim-state);
     }
     .overlay-1 {
       position: absolute; inset: 0; border-radius: 24px;
@@ -341,22 +370,29 @@
 
     /* RESPONSIVE */
     @media (max-width: 900px) {
-      :root { --card-w: 420px; --card-h: 540px; }
+      :root {
+        --card-w: min(420px, 88vw);
+        --card-h: min(540px, 60vh);
+      }
       .hero-split {
         grid-template-columns: 1fr;
-        padding: 60px 24px 40px;
-        gap: 40px;
+        padding: clamp(40px, 5vh, 60px) 24px clamp(24px, 3vh, 40px);
+        gap: clamp(24px, 3vh, 40px);
+        min-height: 0;
       }
       .hero-card-section { width: 100%; justify-content: center; }
       header { padding: 18px 24px; }
       .section-label, .projects-section { padding-left: 24px; padding-right: 24px; }
     }
     @media (max-width: 480px) {
-      :root { --card-w: 100%; --card-h: 400px; }
+      :root {
+        --card-w: min(100%, 92vw);
+        --card-h: min(400px, 55vh);
+      }
       nav { gap: 18px; font-size: 11px; }
       footer { padding: 22px 24px; flex-direction: column; gap: 6px; text-align: center; }
       .project-name { font-size: 15px; }
-      .hero-split { padding: 48px 20px 32px; gap: 32px; }
+      .hero-split { padding: 40px 20px 28px; gap: 28px; }
     }
   </style>
 </head>
@@ -576,10 +612,11 @@ CIuÍôÎ9fç0Lù©Í±©Î®Sfô©5õ¾&xÝµTàbk©©PÙññÿ$ãÕœRHÀÀÄX
     window.addEventListener('load',   fitAscii);
     window.addEventListener('resize', fitAscii);
 
-    // Pause SVG animation when tab is hidden — saves GPU on Safari/mobile
-    const svgAnims = document.querySelectorAll('animate');
+    // Pause CSS animations when tab is hidden — saves GPU on Safari/mobile
     document.addEventListener('visibilitychange', () => {
-      svgAnims.forEach(a => document.hidden ? a.pauseAnimations() : a.unpauseAnimations());
+      document.documentElement.style.setProperty(
+        '--anim-state', document.hidden ? 'paused' : 'running'
+      );
     });
 
   </script>
