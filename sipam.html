@@ -3,15 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- ── No indexing, no caching ── -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>SIPAM</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23005AB2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 18h8'/%3E%3Cpath d='M3 22h18'/%3E%3Cpath d='M14 22a7 7 0 1 0 0-14h-1'/%3E%3Cpath d='M9 14h2'/%3E%3Cpath d='M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z'/%3E%3Cpath d='M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Forum&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════════════════════════════
-   TOKENS & VARIABLES
-═══════════════════════════════════════════════ */
+/* ═══════════════════════ VARIABLES ═══════════════════════ */
 :root {
   --bg:          #f6f7fd;
   --surface:     #eef0fa;
@@ -26,18 +30,17 @@
   --text-muted:  #6b84a8;
   --border:      rgba(0,90,178,0.11);
   --border-md:   rgba(0,90,178,0.18);
-  /* terminal light */
-  --t-bg:       #f8f9fc;
-  --t-hdr:      #eceef5;
-  --t-bd:       #d4d8e8;
-  --t-dim:      #8896b0;
-  --t-prompt:   #0055aa;
-  --t-input:    #1a7a3a;
-  --t-warn:     #b05a00;
-  --t-hint:     #a0aec0;
-  --t-label:    #0055aa;
-  --t-key-bg:   #e8ecf8;
-  --t-key-bd:   #b0bcd8;
+  --t-bg:        #f8f9fc;
+  --t-hdr:       #eceef5;
+  --t-bd:        #d4d8e8;
+  --t-dim:       #8896b0;
+  --t-prompt:    #062540;
+  --t-input:     #1a5c2a;
+  --t-warn:      #b05a00;
+  --t-hint:      #a0aec0;
+  --t-label:     #062540;
+  --t-key-bg:    #e8ecf8;
+  --t-key-bd:    #b0bcd8;
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -48,6 +51,7 @@ body{background:var(--bg);color:var(--primary);font-family:'Space Grotesk',sans-
 /* ── Header ── */
 .site-header{margin-bottom:48px;opacity:0;animation:fadeUp .5s ease .05s forwards}
 .site-label{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.site-label svg{opacity:.7}
 h1{font-family:'Forum',serif;font-size:clamp(1.9rem,5vw,2.9rem);font-weight:400;line-height:1.15;color:var(--primary);margin-bottom:22px}
 
 /* ── Progress ── */
@@ -75,14 +79,24 @@ h2{font-family:'Forum',serif;font-size:1.55rem;font-weight:400;color:var(--prima
 .callout.green{background:var(--green-dim);border-left-color:var(--green)}
 .callout.green strong{color:var(--green)}
 
-/* ── Buttons ── */
-.action-btn{display:inline-flex;align-items:center;gap:10px;background:var(--primary);color:white;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:500;padding:14px 26px;border-radius:10px;text-decoration:none;transition:background .2s,transform .15s;margin:16px 0 4px;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(0,90,178,.22)}
+/* ── Buttons — uniform style ── */
+.action-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--primary);color:white;
+  font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:500;
+  padding:14px 26px;border-radius:10px;text-decoration:none;
+  transition:background .2s,transform .15s,box-shadow .2s;
+  margin:8px 0 4px;border:none;cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,90,178,.22);
+  width:100%;justify-content:center;
+}
 .action-btn:hover{background:var(--primary-lt);transform:translateY(-2px)}
 .action-btn:active{transform:translateY(0)}
 .action-btn.green{background:var(--green);box-shadow:0 4px 14px rgba(45,152,72,.22)}
 .action-btn.green:hover{background:#34ab55}
-.action-btn.ghost{background:transparent;color:var(--primary);border:1.5px solid var(--border-md);box-shadow:none}
-.action-btn.ghost:hover{background:var(--surface);transform:translateY(-1px)}
+.action-btn.outline{background:transparent;color:var(--primary);border:1.5px solid var(--border-md);box-shadow:none}
+.action-btn.outline:hover{background:var(--surface);transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,90,178,.1)}
+.branch-row{display:flex;flex-direction:column;gap:10px;margin-top:20px}
 
 /* ── Checklist ── */
 .checklist{list-style:none;margin:16px 0 8px;display:flex;flex-direction:column;gap:11px}
@@ -100,19 +114,13 @@ h2{font-family:'Forum',serif;font-size:1.55rem;font-weight:400;color:var(--prima
 /* ── Inline code ── */
 code{font-family:'Space Grotesk',monospace;font-size:13px;background:var(--surface2);border:1px solid var(--border-md);border-radius:4px;padding:1px 6px;color:var(--primary)}
 
-/* ── Branch buttons ── */
-.branch-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
-
-/* ═══════════════════════════════════════════════
-   FLOATING "¿POR QUÉ?" BUTTON
-═══════════════════════════════════════════════ */
+/* ═══════════════════════ FLOATING BUTTON ═══════════════════════ */
 .why-btn{
   position:fixed;top:20px;left:20px;z-index:200;
   display:inline-flex;align-items:center;gap:8px;
   background:white;color:var(--primary);
   font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;
-  letter-spacing:.06em;
-  padding:9px 16px;border-radius:100px;
+  letter-spacing:.06em;padding:9px 16px;border-radius:100px;
   border:1.5px solid var(--border-md);
   box-shadow:0 2px 12px rgba(0,60,150,.12);
   cursor:pointer;transition:box-shadow .2s,transform .15s;
@@ -121,32 +129,22 @@ code{font-family:'Space Grotesk',monospace;font-size:13px;background:var(--surfa
 .why-btn:hover{box-shadow:0 4px 20px rgba(0,60,150,.18);transform:translateY(-1px)}
 .why-btn svg{flex-shrink:0;opacity:.7}
 
-/* ═══════════════════════════════════════════════
-   MODAL OVERLAY
-═══════════════════════════════════════════════ */
+/* ═══════════════════════ MODAL ═══════════════════════ */
 .modal-overlay{
   position:fixed;inset:0;z-index:300;
-  background:rgba(10,20,50,.45);
-  backdrop-filter:blur(6px);
+  background:rgba(10,20,50,.45);backdrop-filter:blur(6px);
   display:flex;align-items:center;justify-content:center;
-  padding:24px;
-  opacity:0;pointer-events:none;
-  transition:opacity .3s ease;
+  padding:24px;opacity:0;pointer-events:none;transition:opacity .3s ease;
 }
 .modal-overlay.open{opacity:1;pointer-events:auto}
-
 .modal-box{
-  background:white;border-radius:20px;
-  max-width:640px;width:100%;
-  max-height:90vh;overflow-y:auto;
-  padding:36px;
+  background:white;border-radius:20px;max-width:640px;width:100%;
+  max-height:90vh;overflow-y:auto;padding:36px;
   box-shadow:0 20px 60px rgba(0,30,100,.25);
   transform:translateY(16px) scale(.98);
-  transition:transform .35s cubic-bezier(.22,1,.36,1);
-  position:relative;
+  transition:transform .35s cubic-bezier(.22,1,.36,1);position:relative;
 }
 .modal-overlay.open .modal-box{transform:translateY(0) scale(1)}
-
 .modal-close{
   position:absolute;top:18px;right:20px;
   background:var(--surface);border:1px solid var(--border-md);
@@ -156,63 +154,74 @@ code{font-family:'Space Grotesk',monospace;font-size:13px;background:var(--surfa
   transition:background .15s,color .15s;line-height:1;
 }
 .modal-close:hover{background:var(--surface2);color:var(--primary)}
-
 .modal-title{font-family:'Forum',serif;font-size:1.5rem;color:var(--primary);margin-bottom:16px}
 .modal-text{font-size:15px;color:var(--text-soft);margin-bottom:12px;line-height:1.7}
 
-/* ─── Computer scene inside modal ─── */
+/* ═══════════════════════ COMPUTER SCENE ═══════════════════════ */
 .computer-scene{
   display:grid;
   grid-template-columns:1fr 64px 1fr;
-  align-items:center;
-  justify-items:center;
-  gap:12px;
-  margin:28px 0 8px;
+  align-items:center;justify-items:center;
+  gap:16px;margin:28px 0 8px;
 }
 .computer-col{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%}
 .scene-label{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);text-align:center;line-height:1.4}
 
-/* ── Arrow + sparkles ── */
-.arrow-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;width:64px;height:64px}
-.arrow-svg{flex-shrink:0;position:relative;z-index:1}
+/* ── The smart fix: scale the whole 3D scene into a clipping box ── */
+.computer-viewport{
+  width:160px;height:160px;
+  overflow:hidden;
+  position:relative;
+  flex-shrink:0;
+}
+.computer-stage{
+  position:absolute;
+  /* The original .computer is 150×180, transforms create ~300×300 visual footprint.
+     We scale it to fit the 160px viewport and center it. */
+  width:300px;height:300px;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%) scale(0.5);
+  transform-origin:center center;
+  transform-style:preserve-3d;
+}
 
+/* ── NEW COMPUTER (original CSS, untouched) ── */
+.new-computer-viewport{
+  width:200px;height:160px;
+  overflow:hidden;position:relative;flex-shrink:0;
+}
+.new-computer-stage{
+  position:absolute;
+  width:400px;height:320px;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%) scale(0.5);
+  transform-origin:center center;
+}
+
+/* ── Arrow + sparkles ── */
+.arrow-wrap{display:flex;align-items:center;justify-content:center;position:relative;width:64px;height:64px;flex-shrink:0}
+.arrow-svg{position:relative;z-index:1}
 @keyframes sparkle-burst{
-  0%  {opacity:0;transform:scale(0) rotate(0deg)}
-  35% {opacity:1;transform:scale(1) rotate(15deg)}
+  0%{opacity:0;transform:scale(0) rotate(0deg)}
+  35%{opacity:1;transform:scale(1) rotate(15deg)}
   100%{opacity:0;transform:scale(0) rotate(45deg)}
 }
-.sparkle{
-  position:absolute;
-  width:10px;height:10px;
-  pointer-events:none;
-  animation:sparkle-burst 1.6s ease-in-out infinite;
-}
-.sparkle:nth-child(1){top:2px; left:8px;  animation-delay:0s}
-.sparkle:nth-child(2){top:2px; right:8px; animation-delay:.28s}
-.sparkle:nth-child(3){bottom:2px;left:8px;  animation-delay:.56s}
-.sparkle:nth-child(4){bottom:2px;right:8px; animation-delay:.84s}
-.sparkle:nth-child(5){top:50%; left:0; margin-top:-5px; animation-delay:.14s}
-.sparkle:nth-child(6){top:50%; right:0; margin-top:-5px; animation-delay:.7s}
+.sparkle{position:absolute;width:10px;height:10px;pointer-events:none;animation:sparkle-burst 1.6s ease-in-out infinite}
+.sparkle:nth-child(1){top:2px;left:8px;animation-delay:0s}
+.sparkle:nth-child(2){top:2px;right:8px;animation-delay:.28s}
+.sparkle:nth-child(3){bottom:2px;left:8px;animation-delay:.56s}
+.sparkle:nth-child(4){bottom:2px;right:8px;animation-delay:.84s}
+.sparkle:nth-child(5){top:50%;left:0;margin-top:-5px;animation-delay:.14s}
+.sparkle:nth-child(6){top:50%;right:0;margin-top:-5px;animation-delay:.7s}
 
-/* ─── OLD COMPUTER — inline SVG ─── */
-.old-computer-wrap{display:none} /* no longer used */
-
-/* ── Mobile: stack vertically ── */
 @media(max-width:520px){
-  .computer-scene{
-    grid-template-columns:1fr;
-    grid-template-rows:auto auto auto;
-  }
-  .arrow-wrap{
-    transform:rotate(90deg);
-    margin:4px 0;
-  }
+  .computer-scene{grid-template-columns:1fr;grid-template-rows:auto auto auto}
+  .arrow-wrap{transform:rotate(90deg);margin:4px 0}
 }
-.screen{
-  width:150px;height:130px;position:absolute;
-  transform-style:preserve-3d;
-  transform:translateY(0);
-}
+
+/* ═══════════════════════ ORIGINAL 3D COMPUTER CSS (unchanged) ═══════════════════════ */
+.computer{width:150px;height:180px;position:relative;transform-style:preserve-3d;transform:rotateX(-30deg) rotateY(45deg);transform-origin:center center;margin-top:40px;margin-left:40px}
+.screen{width:150px;height:130px;position:absolute;transform-style:preserve-3d;transform:translateY(0)}
 .square{text-align:center;position:absolute;top:0;left:0;width:100%;height:100%}
 .front{transform:translateZ(75px);background:#c6b5a4}
 .back{transform:translateZ(-75px);background:#c6b5a4}
@@ -249,10 +258,9 @@ code{font-family:'Space Grotesk',monospace;font-size:13px;background:var(--surfa
 .brownpart{position:absolute;width:130px;left:10px;top:10px;height:20px;background:#9e7063}
 .disc{position:absolute;width:30px;left:10px;top:calc(50% - 2.5px);height:5px;background:#282828}
 
-/* ─── NEW COMPUTER (flat modern) ─── */
-.new-computer-wrap{display:flex;flex-direction:column;align-items:center;width:100%}
-.comp{width:100%;height:auto;text-align:center}
-.monitor{width:min(220px,100%);height:145px;display:block;margin:0 auto;border-radius:8px 8px 0 0;padding:7px;border:solid 1px #e0e2e2;background:#000}
+/* ═══════════════════════ ORIGINAL NEW COMPUTER CSS (unchanged) ═══════════════════════ */
+.comp{width:100%;height:194px;text-align:center}
+.monitor{width:275px;height:181px;display:block;margin:0 auto;border-radius:10px 10px 0 0;padding:9px;border:solid 1px #e0e2e2;background:#000}
 .comp .mid{float:left;display:block;height:100%;position:relative;background:#abadc6;width:50%}
 .comp .mid.codigo{background:#22262b}
 .site{overflow:hidden;position:absolute;width:105px;height:138px;bottom:0;right:0}
@@ -260,8 +268,7 @@ code{font-family:'Space Grotesk',monospace;font-size:13px;background:var(--surfa
 .cerrar>div{display:inline-block;width:2px;height:2px;border-radius:50%;background:white;margin:0 1px}
 .inhead{padding:2px;height:5px;background:#ddd8cf}
 .inhead .item{width:10px;height:1px;background:#d1c9bf;margin:0 1px;display:block;float:left}
-.txr{text-align:right}
-.txr .item{float:right}
+.txr{text-align:right}.txr .item{float:right}
 .inslid{width:100%;height:33px;background:#efebe2}
 .incont{padding-top:10px;background:#fefaf0}
 .incont .item{background:#d1c9bf;width:53px;height:2px;display:block;margin:0 auto;margin-top:1px}
@@ -281,83 +288,200 @@ code{font-family:'Space Grotesk',monospace;font-size:13px;background:var(--surfa
 .codigo .fun{background:#fbb053;animation:code .2s infinite}
 .codigo .atr{background:#645572;animation:code .1s infinite}
 .codigo .item{height:3px;width:20px;float:left;margin-right:3px}
-.codigo .item.min{width:13px}
-.codigo .item.lrg{width:30px}
+.codigo .item.min{width:13px}.codigo .item.lrg{width:30px}
 .codigo .line{padding:2px 0;width:100%}
-.codigo .tab1{padding-left:5px}
-.codigo .tab2{padding-left:8px}
-.codigo .tab3{padding-left:10px}
-.codigo .tab4{padding-left:12px}
+.codigo .tab1{padding-left:5px}.codigo .tab2{padding-left:8px}
+.codigo .tab3{padding-left:10px}.codigo .tab4{padding-left:12px}
 .clearfix:after{content:"";display:table;clear:both}
 .comp-base{width:338px;height:12px;background:#e0e2e2;display:block;margin:0 auto;border-radius:0 0 6px 6px}
 
-/* ═══════════════════════════════════════════════
-   TERMINAL BLOCKS
-═══════════════════════════════════════════════ */
+/* ═══════════════════════ TERMINAL BLOCK ═══════════════════════ */
 .terminal-block{border-radius:10px;overflow:hidden;margin:14px 0;border:1px solid var(--t-bd);box-shadow:0 2px 16px rgba(0,20,80,.08);font-family:'Space Grotesk',monospace;font-size:13px;line-height:1.9}
 .terminal-header{background:var(--t-hdr);padding:9px 14px;display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--t-bd)}
 .t-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
 .t-title{font-size:11px;color:var(--t-hint);margin-left:6px;letter-spacing:.05em}
-
-/* AnimeJS layout container */
 .terminal-layout{position:relative;background:var(--t-bg);padding:18px 22px;will-change:height;min-height:3em;overflow:hidden}
-.terminal-layout pre.tblock-a,
-.terminal-layout.show-b pre.tblock-b{position:relative;top:0;left:0}
-.terminal-layout pre.tblock-b,
-.terminal-layout.show-b pre.tblock-a{position:absolute;top:18px;left:22px}
-.terminal-layout pre.tblock-a span,
-.terminal-layout.show-b pre.tblock-b span{display:inline-block}
-.terminal-layout pre.tblock-b span,
-.terminal-layout.show-b pre.tblock-a span{display:none}
+.terminal-layout pre.tblock-a,.terminal-layout.show-b pre.tblock-b{position:relative;top:0;left:0}
+.terminal-layout pre.tblock-b,.terminal-layout.show-b pre.tblock-a{position:absolute;top:18px;left:22px}
+.terminal-layout pre.tblock-a span,.terminal-layout.show-b pre.tblock-b span{display:inline-block}
+.terminal-layout pre.tblock-b span,.terminal-layout.show-b pre.tblock-a span{display:none}
 .terminal-layout pre.tblock-only{position:relative}
-
-/* Token colours */
 .t-kw{color:#6a5acd}.t-fn{color:#c4371a}.t-str{color:#1a7a3a}.t-var{color:#b06000}.t-op{color:#5a6a88}
-/* Semantic terminal — dark readable text */
-.t-dim{color:#4a6080}.t-prompt{color:#062540;font-weight:600}.t-input{color:#1a5c2a}.t-warn{color:#b05a00;font-weight:600}
-.t-label{color:#062540;font-weight:600;letter-spacing:.12em}
-.t-key{display:inline-block;background:var(--t-key-bg);border:1px solid var(--t-key-bd);border-radius:4px;padding:1px 7px;font-size:12px;color:#062540;font-weight:600;margin:0 2px}
-
-/* Pink hint bubble */
+.t-dim{color:#4a6080}.t-prompt{color:var(--t-prompt);font-weight:600}.t-input{color:var(--t-input)}
+.t-warn{color:var(--t-warn);font-weight:600}
 .t-hint{color:#8896b0;font-style:italic;font-size:11px}
+.t-label{color:var(--t-label);font-weight:600;letter-spacing:.12em}
+.t-key{display:inline-block;background:var(--t-key-bg);border:1px solid var(--t-key-bd);border-radius:4px;padding:1px 7px;font-size:12px;color:var(--t-prompt);font-weight:600;margin:0 2px}
 
 /* Pink hint bubble */
 .t-hint-bubble{
   display:inline-flex;align-items:center;gap:5px;
   color:#FF2077;font-style:normal;font-size:12px;font-weight:600;
-  background:rgba(255,32,119,.08);
-  border:1px solid rgba(255,32,119,.25);
-  border-radius:100px;
-  padding:2px 10px 2px 7px;
-  margin-left:4px;
+  background:rgba(255,32,119,.08);border:1px solid rgba(255,32,119,.25);
+  border-radius:100px;padding:2px 10px 2px 7px;margin-left:4px;
   animation:hint-pulse 2.4s ease-in-out infinite;
-  vertical-align:middle;
-  white-space:nowrap;
+  vertical-align:middle;white-space:nowrap;
 }
-.t-hint-bubble::before{
-  content:'↩';font-size:13px;line-height:1;
-}
+.t-hint-bubble::before{content:'↩';font-size:13px;line-height:1}
 @keyframes hint-pulse{
-  0%,100%{box-shadow:0 0 0 0 rgba(255,32,119,.0);background:rgba(255,32,119,.08)}
+  0%,100%{box-shadow:0 0 0 0 rgba(255,32,119,0);background:rgba(255,32,119,.08)}
   50%{box-shadow:0 0 0 4px rgba(255,32,119,.12);background:rgba(255,32,119,.14)}
 }
 
-/* ═══════════════════════════════════════════════
-   3D KEYS
-═══════════════════════════════════════════════ */
+/* ═══════════════════════ 3D KEYS ═══════════════════════ */
 .key-3d{background:linear-gradient(160deg,#e8edf5,#d0d8e8 60%,#b8c4d8);border:1px solid #9aa8c0;border-radius:7px;padding:10px 18px;min-width:56px;text-align:center;box-shadow:0 4px 0 #8090b0,0 5px 8px rgba(0,20,60,.2),inset 0 1px 0 rgba(255,255,255,.8);cursor:default;transition:transform .1s,box-shadow .1s}
 .key-3d span{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:#2a3a5a;user-select:none}
 .key-3d.key-fn{background:linear-gradient(160deg,#dce8f8,#c0d4f0 60%,#a8c0e8);border-color:#7a9acc;box-shadow:0 4px 0 #5a7aaa,0 5px 8px rgba(0,40,120,.2),inset 0 1px 0 rgba(255,255,255,.8)}
 .key-3d.key-fn span{color:#1a3a7a}
 .key-3d:active{transform:translateY(3px);box-shadow:0 1px 0 #8090b0,0 2px 4px rgba(0,20,60,.15),inset 0 1px 0 rgba(255,255,255,.6)}
 
-/* ── Footer ── */
-.site-footer{margin-top:36px;font-size:12px;color:var(--text-muted);text-align:center}
+/* ═══════════════════════ FOOTER ═══════════════════════ */
+.site-footer{text-align:center;margin-top:36px;padding-top:20px;font-size:1rem;color:#6b84a8;font-weight:500;font-family:'Space Grotesk',sans-serif}
+.site-footer .heart{color:#e25555;display:inline-block;animation:heartbeat 1.4s ease-in-out infinite}
+@keyframes heartbeat{0%{transform:scale(1)}14%{transform:scale(1.5)}28%{transform:scale(1.2)}42%{transform:scale(2)}70%,100%{transform:scale(1)}}
+.site-footer a{color:#3a2e26;text-decoration:none;font-weight:700;border-bottom:2px solid transparent;transition:border-color .2s,color .2s}
+.site-footer a:hover{color:#5a4a3e;border-bottom-color:#5a4a3e}
+
+/* ── Confetti ── */
+.confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;display:none}
 
 @media(max-width:540px){.page{padding:40px 16px 72px}.step{padding:24px 20px}h1{font-size:1.9rem}.modal-box{padding:24px 18px}.why-btn{top:12px;left:12px;font-size:11px;padding:7px 12px}}
 </style>
 </head>
 <body>
+<canvas class="confetti-canvas" id="confetti"></canvas>
+
+<!-- ══ FLOATING WHY BUTTON ══ -->
+<button class="why-btn" onclick="openModal()">
+  <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 4v3M6.5 9v.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  ¿Por qué necesito esto?
+</button>
+
+<!-- ══ MODAL ══ -->
+<div class="modal-overlay" id="storyModal" onclick="handleOverlayClick(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">¿Por qué necesito hacer esto?</div>
+    <p class="modal-text">El SIPAM — <em>Sistema Integral del Paciente Ambulatorio</em> — fue diseñado originalmente para correr en terminales HP 700/92 de los años noventa. Nadie ha considerado valioso actualizarlo.</p>
+    <p class="modal-text">Tu Mac moderna no habla ese lenguaje por defecto. Esta guía instala las herramientas necesarias para que tu computadora nueva se comporte como aquella terminal antigua y puedas acceder al sistema.</p>
+
+    <div class="computer-scene">
+
+      <!-- OLD COMPUTER — original CSS 3D, scaled into viewport -->
+      <div class="computer-col">
+        <div class="computer-viewport">
+          <div class="computer-stage">
+            <div class="computer">
+              <div class="screen">
+                <div class="front square"></div>
+                <div class="back square"></div>
+                <div class="top square"></div>
+                <div class="left square"><div class="progressbar"></div></div>
+                <div class="left1 square"></div>
+                <div class="back1 square"></div>
+                <div class="bottom1 square"></div>
+              </div>
+              <div class="screenbottom">
+                <div class="front2 square"></div>
+                <div class="top2 square"></div>
+                <div class="left2 square"><div class="brownpart"><div class="disc"></div></div></div>
+              </div>
+              <div class="screenbottombottom">
+                <div class="front3 square"></div>
+                <div class="left3 square"></div>
+                <div class="bottom3 square"></div>
+              </div>
+              <div class="keyboard">
+                <div class="front4 square"></div>
+                <div class="top4 square"></div>
+                <div class="left4 square"></div>
+                <div class="bottom4 square"></div>
+              </div>
+              <div class="keyboardkeys">
+                <div class="front5 square"></div>
+                <div class="top5 square"></div>
+                <div class="left5 square"></div>
+                <div class="bottom5 square"></div>
+              </div>
+              <div class="numpad">
+                <div class="front6 square"></div>
+                <div class="top6 square"></div>
+                <div class="left6 square"></div>
+                <div class="bottom6 square"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="scene-label">Terminal HP 700/92<br><span style="font-weight:400;opacity:.6">circa 1993</span></div>
+      </div>
+
+      <!-- ARROW + SPARKLES -->
+      <div class="arrow-wrap">
+        <svg class="sparkle" viewBox="0 0 10 10" fill="#FF2077" style="top:2px;left:6px;animation-delay:0s"><path d="M5 0L5.7 4.3L10 5L5.7 5.7L5 10L4.3 5.7L0 5L4.3 4.3Z"/></svg>
+        <svg class="sparkle" viewBox="0 0 10 10" fill="#FF2077" style="top:2px;right:6px;animation-delay:.28s"><path d="M5 0L5.7 4.3L10 5L5.7 5.7L5 10L4.3 5.7L0 5L4.3 4.3Z"/></svg>
+        <svg class="sparkle" viewBox="0 0 10 10" fill="#FF2077" style="bottom:2px;left:6px;animation-delay:.56s"><path d="M5 0L5.7 4.3L10 5L5.7 5.7L5 10L4.3 5.7L0 5L4.3 4.3Z"/></svg>
+        <svg class="sparkle" viewBox="0 0 10 10" fill="#FF2077" style="bottom:2px;right:6px;animation-delay:.84s"><path d="M5 0L5.7 4.3L10 5L5.7 5.7L5 10L4.3 5.7L0 5L4.3 4.3Z"/></svg>
+        <svg class="sparkle" viewBox="0 0 10 10" fill="#FF2077" style="top:50%;left:0;margin-top:-5px;animation-delay:.14s"><path d="M5 0L5.7 4.3L10 5L5.7 5.7L5 10L4.3 5.7L0 5L4.3 4.3Z"/></svg>
+        <svg class="sparkle" viewBox="0 0 10 10" fill="#FF2077" style="top:50%;right:0;margin-top:-5px;animation-delay:.7s"><path d="M5 0L5.7 4.3L10 5L5.7 5.7L5 10L4.3 5.7L0 5L4.3 4.3Z"/></svg>
+        <svg class="arrow-svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
+          <path d="M6 22H38M28 12L38 22L28 32" stroke="#FF2077" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <!-- NEW COMPUTER — original CSS, scaled into viewport -->
+      <div class="computer-col">
+        <div class="new-computer-viewport">
+          <div class="new-computer-stage">
+            <div class="comp">
+              <div class="monitor">
+                <div class="mid">
+                  <div class="site">
+                    <div class="topbar"><div class="cerrar"><div class="circl"></div><div class="circl"></div><div class="circl"></div></div></div>
+                    <div class="inhead">
+                      <div class="mid"><div class="item"></div></div>
+                      <div class="mid txr"><div class="item"></div><div class="item"></div><div class="item"></div><div class="item"></div></div>
+                    </div>
+                    <div class="inslid"></div>
+                    <div class="incont">
+                      <div class="item"></div><div class="item"></div><div class="item"></div><div class="item"></div>
+                      <div class="wid">
+                        <div class="itwid"><div><div class="contfoot"></div></div></div>
+                        <div class="itwid"><div><div class="contfoot"></div></div></div>
+                        <div class="itwid"><div><div class="contfoot"></div></div></div>
+                        <div class="clearfix"></div>
+                      </div>
+                      <div class="infoot"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="mid codigo">
+                  <div class="line"><div class="item var"></div><div class="item cont"></div><div class="clearfix"></div></div>
+                  <div class="line"><div class="item min var"></div><div class="item min fun"></div><div class="clearfix"></div></div>
+                  <div class="line"><div class="item min var"></div><div class="clearfix"></div></div>
+                  <div class="line"><div class="item var"></div><div class="item atr"></div><div class="item cont"></div><div class="clearfix"></div></div>
+                  <div class="line tab1"><div class="item min atr"></div><div class="item lrg fun"></div><div class="item min fun"></div><div class="item lrg cont"></div><div class="clearfix"></div></div>
+                  <div class="line tab1"><div class="item lrg atr"></div><div class="item min fun"></div><div class="item min cont"></div><div class="clearfix"></div></div>
+                  <div class="line tab1"><div class="item atr"></div><div class="item min fun"></div><div class="item atr"></div><div class="clearfix"></div></div>
+                  <div class="line tab1"><div class="item min atr"></div><div class="item min cont"></div><div class="item lrg atr"></div><div class="item fun"></div><div class="clearfix"></div></div>
+                  <div class="line tab1"><div class="item min atr"></div><div class="item lrg fun"></div><div class="item lrg cont"></div><div class="item min fun"></div><div class="clearfix"></div></div>
+                  <div class="line tab2"><div class="item min var"></div><div class="clearfix"></div></div>
+                  <div class="line tab2"><div class="item min atr"></div><div class="item min fun"></div><div class="clearfix"></div></div>
+                  <div class="line tab3"><div class="item min atr"></div><div class="item min fun"></div><div class="item lrg fun"></div><div class="item lrg cont"></div><div class="clearfix"></div></div>
+                  <div class="line tab1"><div class="item atr"></div><div class="item var"></div><div class="item cont"></div><div class="clearfix"></div></div>
+                  <div class="line"><div class="item min var"></div><div class="clearfix"></div></div>
+                </div>
+              </div>
+              <div class="comp-base"></div>
+            </div>
+          </div>
+        </div>
+        <div class="scene-label">Tu Mac<br><span style="font-weight:400;opacity:.6">con iTerm2 + SIPAM</span></div>
+      </div>
+
+    </div><!-- /computer-scene -->
+  </div><!-- /modal-box -->
+</div><!-- /modal-overlay -->
+
 <div class="page">
 
 <!-- ══ HEADER ══ -->
@@ -375,143 +499,7 @@ code{font-family:'Space Grotesk',monospace;font-size:13px;background:var(--surfa
   </div>
 </header>
 
-<!-- ══ FLOATING WHY BUTTON ══ -->
-<button class="why-btn" onclick="openModal()">
-  <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 4v3M6.5 9v.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-  ¿Por qué necesito esto?
-</button>
-
-<!-- ══ MODAL ══ -->
-<div class="modal-overlay" id="storyModal" onclick="handleOverlayClick(event)">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-
-    <div class="modal-title">¿Por qué necesito hacer esto?</div>
-    <p class="modal-text">El SIPAM — <em>Sistema Integral del Paciente Ambulatorio</em> — fue diseñado originalmente para correr en terminales HP 700/92 de los años noventa. Nadie ha considerado valioso actualizarlo.</p>
-    <p class="modal-text">Tu Mac moderna no habla ese lenguaje por defecto. Esta guía instala las herramientas necesarias para que tu computadora nueva se comporte como aquella terminal antigua y puedas acceder al sistema.</p>
-
-    <!-- Computer transformation scene -->
-    <div class="computer-scene">
-
-      <!-- OLD COMPUTER — HP 700/92 isometric SVG -->
-      <div class="computer-col">
-        <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
-          <!-- Monitor: top face -->
-          <polygon points="80,18  132,46  80,74  28,46"  fill="#EDE0CC"/>
-          <!-- Monitor: left face -->
-          <polygon points="28,46  80,74  80,120  28,92"  fill="#C8B49E"/>
-          <!-- Monitor: right face -->
-          <polygon points="132,46 80,74  80,120  132,92" fill="#B8A28E"/>
-          <!-- Screen bezel left face -->
-          <polygon points="36,54  76,74  76,112  36,92"  fill="#333"/>
-          <!-- Screen glass -->
-          <polygon points="41,58  72,74  72,108  41,92"  fill="#0f172a"/>
-          <!-- Green progress bar -->
-          <polygon points="47,86  65,93  65,97  47,90"   fill="#1a1a1a"/>
-          <polygon points="47,86  59,91  59,95  47,90"   fill="#4EC456"/>
-          <!-- Floppy strip: right face -->
-          <polygon points="84,78  128,56  128,62  84,84"  fill="#9e7063"/>
-          <polygon points="87,80  124,60  124,63  87,83"  fill="#2a2a2a"/>
-          <!-- Neck -->
-          <polygon points="68,120  92,120  92,128  68,128" fill="#C8B49E"/>
-          <polygon points="60,128  68,120  68,128  60,136" fill="#B8A28E"/>
-          <polygon points="100,128 92,120  92,128  100,136" fill="#A89278"/>
-          <!-- Base top -->
-          <polygon points="48,134  112,134  124,142  36,142"  fill="#EDE0CC"/>
-          <!-- Base left -->
-          <polygon points="36,142  48,134  48,150  36,158"  fill="#C8B49E"/>
-          <!-- Base right -->
-          <polygon points="124,142 112,134  112,150  124,158" fill="#B8A28E"/>
-          <!-- Base bottom -->
-          <polygon points="36,158  124,158  112,150  48,150" fill="#D4C0AC"/>
-          <!-- Keyboard top -->
-          <polygon points="8,110  52,88   52,98   8,120"  fill="#EDE0CC"/>
-          <!-- Keyboard front -->
-          <polygon points="8,120  52,98   52,106  8,128"  fill="#C8B49E"/>
-          <!-- Keyboard right end -->
-          <polygon points="52,88  58,91  58,109  52,106"  fill="#B8A28E"/>
-        </svg>
-        <div class="scene-label">Terminal HP 700/92<br><span style="font-weight:400;opacity:.6">circa 1993</span></div>
-      </div>
-
-      <!-- ARROW WITH SPARKLES -->
-      <div class="arrow-wrap">
-        <svg class="sparkle" viewBox="0 0 10 10" fill="#FF2077" style="top:2px;left:6px;animation-delay:0s"><path d="M5 0L5.7 4.3L10 5L5.7 5.7L5 10L4.3 5.7L0 5L4.3 4.3Z"/></svg>
-        <svg class="sparkle" viewBox="0 0 10 10" fill="#FF2077" style="top:2px;right:6px;animation-delay:.28s"><path d="M5 0L5.7 4.3L10 5L5.7 5.7L5 10L4.3 5.7L0 5L4.3 4.3Z"/></svg>
-        <svg class="sparkle" viewBox="0 0 10 10" fill="#FF2077" style="bottom:2px;left:6px;animation-delay:.56s"><path d="M5 0L5.7 4.3L10 5L5.7 5.7L5 10L4.3 5.7L0 5L4.3 4.3Z"/></svg>
-        <svg class="sparkle" viewBox="0 0 10 10" fill="#FF2077" style="bottom:2px;right:6px;animation-delay:.84s"><path d="M5 0L5.7 4.3L10 5L5.7 5.7L5 10L4.3 5.7L0 5L4.3 4.3Z"/></svg>
-        <svg class="sparkle" viewBox="0 0 10 10" fill="#FF2077" style="top:50%;left:0;margin-top:-5px;animation-delay:.14s"><path d="M5 0L5.7 4.3L10 5L5.7 5.7L5 10L4.3 5.7L0 5L4.3 4.3Z"/></svg>
-        <svg class="sparkle" viewBox="0 0 10 10" fill="#FF2077" style="top:50%;right:0;margin-top:-5px;animation-delay:.7s"><path d="M5 0L5.7 4.3L10 5L5.7 5.7L5 10L4.3 5.7L0 5L4.3 4.3Z"/></svg>
-        <svg class="arrow-svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
-          <path d="M6 22H38M28 12L38 22L28 32" stroke="#FF2077" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-
-      <!-- NEW COMPUTER — MacBook SVG -->
-      <div class="computer-col">
-        <svg width="180" height="140" viewBox="0 0 180 140" xmlns="http://www.w3.org/2000/svg">
-          <!-- Screen lid outer -->
-          <rect x="10" y="6" width="160" height="102" rx="8" fill="#1a1a1f"/>
-          <!-- Screen bezel -->
-          <rect x="14" y="10" width="152" height="94" rx="6" fill="#0f0f14"/>
-          <!-- Display area — two-pane: browser left + code right -->
-          <!-- Left pane: website mockup -->
-          <rect x="18" y="14" width="74" height="86" rx="3" fill="#abadc6"/>
-          <!-- Left top bar -->
-          <rect x="18" y="14" width="74" height="10" rx="3" fill="#8f91a8"/>
-          <circle cx="24" cy="19" r="2" fill="#ff5f57"/>
-          <circle cx="30" cy="19" r="2" fill="#febc2e"/>
-          <circle cx="36" cy="19" r="2" fill="#28c840"/>
-          <!-- Left content lines -->
-          <rect x="24" y="28" width="28" height="2" rx="1" fill="#d1c9bf" opacity=".8"/>
-          <rect x="24" y="33" width="56" height="2" rx="1" fill="#d1c9bf" opacity=".6"/>
-          <rect x="24" y="38" width="44" height="2" rx="1" fill="#d1c9bf" opacity=".6"/>
-          <rect x="24" y="43" width="50" height="2" rx="1" fill="#d1c9bf" opacity=".6"/>
-          <!-- Left image placeholder -->
-          <rect x="24" y="52" width="62" height="32" rx="2" fill="#c8c0b8" opacity=".7"/>
-          <!-- Right pane: code editor -->
-          <rect x="94" y="14" width="74" height="86" rx="3" fill="#1e2433"/>
-          <!-- Code lines with syntax colors -->
-          <rect x="98" y="20" width="22" height="2" rx="1" fill="#ac5e47"/>
-          <rect x="122" y="20" width="30" height="2" rx="1" fill="#464748"/>
-          <rect x="98" y="26" width="16" height="2" rx="1" fill="#ac5e47"/>
-          <rect x="116" y="26" width="20" height="2" rx="1" fill="#fbb053"/>
-          <rect x="98" y="32" width="12" height="2" rx="1" fill="#ac5e47"/>
-          <rect x="103" y="38" width="28" height="2" rx="1" fill="#645572"/>
-          <rect x="133" y="38" width="20" height="2" rx="1" fill="#fbb053"/>
-          <rect x="103" y="44" width="32" height="2" rx="1" fill="#645572"/>
-          <rect x="137" y="44" width="14" height="2" rx="1" fill="#464748"/>
-          <rect x="103" y="50" width="18" height="2" rx="1" fill="#fbb053"/>
-          <rect x="123" y="50" width="26" height="2" rx="1" fill="#464748"/>
-          <rect x="103" y="56" width="24" height="2" rx="1" fill="#645572"/>
-          <rect x="103" y="62" width="14" height="2" rx="1" fill="#ac5e47"/>
-          <rect x="107" y="68" width="30" height="2" rx="1" fill="#fbb053"/>
-          <rect x="107" y="74" width="20" height="2" rx="1" fill="#464748"/>
-          <rect x="98" y="80" width="10" height="2" rx="1" fill="#ac5e47"/>
-          <!-- Camera dot -->
-          <circle cx="90" cy="12" r="1.5" fill="#3a3a4a"/>
-          <!-- Hinge / chin -->
-          <rect x="10" y="106" width="160" height="6" rx="0" fill="#2a2a32"/>
-          <!-- Bottom chassis -->
-          <rect x="0" y="112" width="180" height="18" rx="4" fill="#d0d0d8"/>
-          <!-- Keyboard area on chassis -->
-          <rect x="20" y="115" width="140" height="10" rx="2" fill="#c4c4cc"/>
-          <!-- Trackpad -->
-          <rect x="72" y="116" width="36" height="8" rx="2" fill="#b8b8c0"/>
-          <!-- Apple logo -->
-          <circle cx="90" cy="58" r="0" fill="none"/>
-        </svg>
-        <div class="scene-label">Tu Mac<br><span style="font-weight:400;opacity:.6">con iTerm2 + SIPAM</span></div>
-      </div>
-
-    </div><!-- /computer-scene -->
-  </div><!-- /modal-box -->
-</div><!-- /modal-overlay -->
-
-
-<!-- ══════════════════════════════════════════
-     PASO 0 — ¿Ya instalaste SIPAM antes?
-══════════════════════════════════════════ -->
+<!-- ══ PASO 0 ══ -->
 <div class="step active" id="step-0">
   <div class="step-meta">
     <div class="step-tag">Punto de partida</div>
@@ -524,15 +512,14 @@ code{font-family:'Space Grotesk',monospace;font-size:13px;background:var(--surfa
       <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 7.5h11M8 3l4.5 4.5L8 12" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       No, es mi primera vez
     </button>
-    <button class="action-btn ghost" onclick="skipToStep4()">
-      Ya tengo SIPAM instalado →
+    <button class="action-btn outline" onclick="skipToStep4()">
+      Ya tengo SIPAM instalado
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 7.5h11M8 3l4.5 4.5L8 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     PASO 1 — Instalar iTerm2
-══════════════════════════════════════════ -->
+<!-- ══ PASO 1 ══ -->
 <div class="step" id="step-1">
   <div class="step-meta">
     <div class="step-tag">Prerequisito</div>
@@ -557,9 +544,7 @@ code{font-family:'Space Grotesk',monospace;font-size:13px;background:var(--surfa
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     PASO 2 — Script automático
-══════════════════════════════════════════ -->
+<!-- ══ PASO 2 ══ -->
 <div class="step" id="step-2">
   <div class="step-meta">
     <div class="step-tag">Instalación automática</div>
@@ -567,8 +552,8 @@ code{font-family:'Space Grotesk',monospace;font-size:13px;background:var(--surfa
   </div>
   <h2>Instala todo con un clic</h2>
   <p>Este botón abrirá iTerm2 y ejecutará el script automáticamente. No necesitas escribir nada.</p>
-  <a class="action-btn green" id="runBtn"
-     href="iterm2:/command?c=bash%20%3C(curl%20-fsSL%20https%3A%2F%2Ffguadarrama.com%2Finstalar_sipam.sh)"
+  <a class="action-btn green"
+     href="iterm2:/command?c=bash%20%3C(curl%20-fsSL%20https%3A%2F%2Ff-gc.dev%2Finstalar_sipam.sh)"
      onclick="setTimeout(()=>{ advanceToStep(3); }, 1500)">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><polygon points="4,2 13,8 4,14" fill="white"/></svg>
     Ejecutar instalación
@@ -582,9 +567,7 @@ code{font-family:'Space Grotesk',monospace;font-size:13px;background:var(--surfa
   <p>Verás mensajes con ✅ conforme avanza. Cuando termine aparecerá <code>🏁 Instalación completa</code>.</p>
 </div>
 
-<!-- ══════════════════════════════════════════
-     PASO 3 — Reiniciar
-══════════════════════════════════════════ -->
+<!-- ══ PASO 3 ══ -->
 <div class="step" id="step-3">
   <div class="step-meta">
     <div class="step-tag">Activación</div>
@@ -593,7 +576,7 @@ code{font-family:'Space Grotesk',monospace;font-size:13px;background:var(--surfa
   <h2>Reinicia iTerm2 y conéctate</h2>
   <p>Cierra iTerm2 completamente con <code>Cmd + Q</code> y vuelve a abrirlo para que cargue el perfil SIPAM.</p>
   <div class="callout green">
-    <strong>¡Listo!</strong> Verás el ícono <strong>SIPAM</strong> en tu Dock.
+    <strong>¡Listo!</strong> Verás el ícono <strong>SIPAM</strong> en tu Dock. Haz clic en él para conectarte.
   </div>
   <ul class="checklist">
     <li id="chk-3a" onclick="toggleCheck('chk-3a',3)">
@@ -607,9 +590,7 @@ code{font-family:'Space Grotesk',monospace;font-size:13px;background:var(--surfa
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     PASO 4 — Primera conexión
-══════════════════════════════════════════ -->
+<!-- ══ PASO 4 ══ -->
 <div class="step" id="step-4">
   <div class="step-meta">
     <div class="step-tag">Primera conexión</div>
@@ -666,7 +647,6 @@ code{font-family:'Space Grotesk',monospace;font-size:13px;background:var(--surfa
     <div class="terminal-layout" id="layout-main">
       <pre class="tblock-only" style="text-align:center"><code><span class="t-dim">||| ||| |||| ||| ||||  ||  ||| ||  |||  ||</span>
 <span class="t-dim">|| |||| ||  ||||  ||  |||||  ||  |||  ||||</span>
-<span class="t-dim">  |  || ||  | ||| || || ||| |||| || ||| ||</span>
 
 <span class="t-label">I . N . N . S . Z</span>
 <span class="t-dim">Instituto Nacional de Nutrición Salvador Zubirán</span>
@@ -700,25 +680,24 @@ code{font-family:'Space Grotesk',monospace;font-size:13px;background:var(--surfa
       <span style="font-size:11px;color:var(--text-muted);">presiona</span>
     </div>
     <div style="font-size:22px;color:var(--text-muted);font-weight:300;">=</div>
-    <div style="background:var(--green-dim);border:1px solid var(--green);border-radius:8px;padding:10px 16px;font-size:13px;color:var(--green);font-weight:600;">
-      Continuar →
-    </div>
+    <div style="background:var(--green-dim);border:1px solid var(--green);border-radius:8px;padding:10px 16px;font-size:13px;color:var(--green);font-weight:600;">Continuar →</div>
   </div>
 
   <div class="callout">
     <strong>En Macs con Touch Bar</strong> o teclados modernos, las teclas F1–F12 actúan como controles de brillo/volumen por defecto. Mantén <code>Fn</code> presionada para activar la función real.
   </div>
-
   <div class="callout green">
     <strong>¡Todo listo!</strong> Ya puedes navegar el SIPAM con normalidad. Haz clic en el ícono del Dock cada vez que necesites conectarte.
   </div>
 </div>
 
-<footer class="site-footer">Guía de Instalación SIPAM · INNSZ · 2025</footer>
+<!-- ══ FOOTER ══ -->
+<footer class="site-footer" id="footer-trigger">
+  Made with <span class="heart">♥</span> by <a href="https://fguadarrama.com/about">Fran</a>
+</footer>
 
 </div><!-- /page -->
 
-<!-- ══ STEP NAVIGATION ══ -->
 <script>
 const required = { 0:[], 1:['chk-1a'], 2:[], 3:['chk-3a'], 4:[] };
 const checked  = { 0:new Set(), 1:new Set(), 2:new Set(), 3:new Set(), 4:new Set() };
@@ -743,11 +722,8 @@ function toggleCheck(id, stepNum) {
 function evaluateStep(num) {
   const allDone = required[num].every(id => checked[num].has(id));
   const hint = document.getElementById('hint-' + num);
-  if (allDone) {
-    advanceToStep(num + 1);
-  } else {
-    if (hint) hint.classList.remove('hidden');
-  }
+  if (allDone) { advanceToStep(num + 1); }
+  else { if (hint) hint.classList.remove('hidden'); }
 }
 
 function advanceToStep(num) {
@@ -757,9 +733,7 @@ function advanceToStep(num) {
   currentStep = num;
   const next = document.getElementById('step-' + num);
   if (next) {
-    next.style.animation = 'none';
-    next.offsetHeight;
-    next.style.animation = '';
+    next.style.animation = 'none'; next.offsetHeight; next.style.animation = '';
     next.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -767,15 +741,12 @@ function advanceToStep(num) {
   if (num === 4) window.__startSIPAMAnimations && window.__startSIPAMAnimations();
 }
 
-// Skip directly to step 4 (already installed path)
 function skipToStep4() {
   const cur = document.getElementById('step-' + currentStep);
   if (cur) cur.classList.remove('active');
   currentStep = 4;
   const next = document.getElementById('step-4');
-  next.style.animation = 'none';
-  next.offsetHeight;
-  next.style.animation = '';
+  next.style.animation = 'none'; next.offsetHeight; next.style.animation = '';
   next.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
   updateProgress();
@@ -783,13 +754,12 @@ function skipToStep4() {
 }
 
 function updateProgress() {
-  // Map step numbers to dot indices (step 0 = dot 1, etc.)
   const dotIdx = Math.min(currentStep + 1, TOTAL_DOTS);
   for (let i = 1; i <= TOTAL_DOTS; i++) {
     const dot = document.getElementById('dot-' + i);
     if (!dot) continue;
     dot.classList.remove('active','done');
-    if (i < dotIdx)       dot.classList.add('done');
+    if (i < dotIdx) dot.classList.add('done');
     else if (i === dotIdx) dot.classList.add('active');
   }
 }
@@ -799,64 +769,78 @@ function openModal(){document.getElementById('storyModal').classList.add('open')
 function closeModal(){document.getElementById('storyModal').classList.remove('open');document.body.style.overflow=''}
 function handleOverlayClick(e){if(e.target===document.getElementById('storyModal'))closeModal()}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+// ── Confetti (footer hover) ──
+(() => {
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  const colors = ['#005AB2','#1a6fc4','#2d9848','#FF2077','#fbb053','#a8e6cf','#ff8b94','#c39bd3'];
+  let pieces = [], running = false;
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+  window.addEventListener('resize',resize); resize();
+  class Piece{
+    constructor(cx,cy){
+      this.x=cx+(Math.random()-.5)*100; this.y=cy+(Math.random()-.5)*30;
+      this.w=3+Math.random()*7; this.h=3+Math.random()*7;
+      this.color=colors[Math.floor(Math.random()*colors.length)];
+      this.vx=(Math.random()-.5)*6; this.vy=-(1+Math.random()*4);
+      this.rot=Math.random()*Math.PI*2; this.rv=(Math.random()-.5)*.2;
+      this.alpha=1; this.shape=Math.random()>.4?'rect':'circle';
+    }
+    update(){this.x+=this.vx;this.y+=this.vy;this.vy+=.1;this.vx*=.995;this.rot+=this.rv;this.alpha-=.01;if(this.alpha<=0||this.y>H+20)this.alpha=0}
+    draw(){
+      if(this.alpha<=0)return;
+      ctx.save();ctx.globalAlpha=this.alpha;ctx.translate(this.x,this.y);ctx.rotate(this.rot);ctx.fillStyle=this.color;
+      if(this.shape==='rect'){ctx.fillRect(-this.w/2,-this.h/2,this.w,this.h);}
+      else{ctx.beginPath();ctx.arc(0,0,this.w/2,0,Math.PI*2);ctx.fill();}
+      ctx.restore();
+    }
+  }
+  function loop(){
+    ctx.clearRect(0,0,W,H);let alive=false;
+    for(const p of pieces){p.update();p.draw();if(p.alpha>0)alive=true;}
+    if(alive){requestAnimationFrame(loop);}else{running=false;canvas.style.display='none';}
+  }
+  function burst(el){
+    if(running)return; running=true; resize(); canvas.style.display='block';
+    const rect=el.getBoundingClientRect();
+    const cx=rect.left+rect.width/2; const cy=rect.top+rect.height/2;
+    pieces=[];
+    for(let i=0;i<70;i++)pieces.push(new Piece(cx,cy));
+    loop();
+  }
+  document.getElementById('footer-trigger').addEventListener('mouseenter',function(){burst(this)});
+})();
 </script>
 
-<!-- ══ ANIMEJS — one-shot morph for login terminal ══ -->
 <script type="module">
 import { createLayout, stagger, random } from 'https://esm.sh/animejs@4.3.0';
-
 let started = false;
-
 window.__startSIPAMAnimations = () => {
-  if (started) return;
-  started = true;
-
+  if (started) return; started = true;
   setTimeout(() => {
-    // ── ONE-SHOT morph: A → B, stops after first transition ──
     let morphDone = false;
-
     const layout = createLayout('#layout-login', {
-      loop: false,          // run once, do not loop
-      duration: 800,
-      delay: 100,
-      ease: 'inOutExpo',
-      enterFrom: {
-        opacity: 0,
-        duration: 1000,
-        delay: 60,
-      },
+      loop: false, duration: 800, delay: 100, ease: 'inOutExpo',
+      enterFrom: { opacity: 0, duration: 1000, delay: 60 },
       leaveTo: {
         opacity: 0,
-        transform: () =>
-          `translate(${random(-28,28)}px,${random(-70,70)}px) rotate(${random(-12,12)}deg)`,
-        duration: 600,
-        delay: stagger([0, 160], { from: 'random' }),
-        ease: 'out(3)',
+        transform: () => `translate(${random(-28,28)}px,${random(-70,70)}px) rotate(${random(-12,12)}deg)`,
+        duration: 600, delay: stagger([0,160],{from:'random'}), ease: 'out(3)',
       },
     });
-
-    // Trigger A→B exactly once, then stop
     document.fonts.ready.then(() => {
-      if (morphDone) return;
-      morphDone = true;
+      if (morphDone) return; morphDone = true;
       layout.update(({ root }) => root.classList.add('show-b'));
     });
-
-    // ── Entrance animation for main screen tokens ──
     setTimeout(() => {
       const spans = document.querySelectorAll('#layout-main code span');
-      spans.forEach(s => { s.style.opacity = '0'; s.style.transform = 'translateY(5px)'; });
+      spans.forEach(s => { s.style.opacity='0'; s.style.transform='translateY(5px)'; });
       import('https://esm.sh/animejs@4.3.0').then(({ animate, stagger: sg }) => {
-        animate(spans, {
-          opacity: [0, 1],
-          translateY: [5, 0],
-          duration: 350,
-          delay: sg(10, { start: 150 }),
-          ease: 'outExpo',
-        });
+        animate(spans, { opacity:[0,1], translateY:[5,0], duration:350, delay:sg(10,{start:150}), ease:'outExpo' });
       });
     }, 500);
-
   }, 400);
 };
 </script>
