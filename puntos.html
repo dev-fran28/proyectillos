@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<!--
+  ╔═══════════════════════════════════════════════════════╗
+  ║   Voronoi Stippling · Francisco Guadarrama            ║
+  ║   No indexar ni cachear — instrucciones para bots:    ║
+  ╚═══════════════════════════════════════════════════════╝
+-->
+<html lang="es">
+<head>
+<!-- ── SEO / bot directives: no index, no cache ───────────── -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Voronoi Stippling · Retratos por puntos</title>
+
+<!-- ── Google Fonts: Source Sans 3 + DM Mono ─────────────── -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+/* ── Reset ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Color tokens: sRGB base + P3 wide-gamut override ──── */
+:root {
+  --bg:        #f6f7fd;
+  --surface:   #ffffff;
+  --ink:       #3d4251;
+  --ink-muted: #7c8099;
+  --accent:    #5e81ac;
+  --accent-dk: #4a6a91;
+  --accent-lt: #dce6f3;
+  --border:    #dde0ee;
+  --heart:     #bf616a;
+  --radius:    6px;
+  --shadow:    0 2px 14px rgba(94,129,172,0.11);
+}
+
+/* P3 wide-gamut: only applied on capable displays */
+@media (color-gamut: p3) {
+  :root {
+    --bg:        color(display-p3 0.965 0.969 0.992);
+    --surface:   color(display-p3 1 1 1);
+    --ink:       color(display-p3 0.237 0.259 0.318);
+    --ink-muted: color(display-p3 0.486 0.502 0.600);
+    --accent:    color(display-p3 0.365 0.506 0.675);
+    --accent-dk: color(display-p3 0.290 0.416 0.569);
+    --accent-lt: color(display-p3 0.863 0.902 0.953);
+    --border:    color(display-p3 0.867 0.878 0.933);
+    --heart:     color(display-p3 0.753 0.384 0.416);
+  }
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Top bar ───────────────────────────────────────────── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 2rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  gap: 1rem;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.topbar-title h1 {
+  font-family: 'DM Mono', monospace;
+  font-weight: 300;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+.topbar-title h1 span { color: var(--accent); font-weight: 400; }
+.topbar-title p {
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+  letter-spacing: 0.05em;
+  margin-top: 0.05rem;
+}
+.topbar-actions { display: flex; gap: 0.6rem; align-items: center; }
+
+/* ── Two-column workspace ──────────────────────────────── */
+.workspace {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  flex: 1;
+  overflow: hidden;
+}
+
+@media (max-width: 780px) {
+  .workspace {
+    grid-template-columns: 1fr;
+    overflow: visible;
+  }
+}
+
+/* ── LEFT panel ────────────────────────────────────────── */
+.panel-left {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.4rem 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  overflow-y: auto;
+}
+
+.section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.55rem;
+}
+
+/* Upload */
+.upload-zone {
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 1.3rem 0.8rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s, color 0.18s;
+  font-size: 0.77rem;
+  color: var(--ink-muted);
+  letter-spacing: 0.03em;
+  line-height: 1.65;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-lt);
+  color: var(--accent);
+}
+.upload-zone input { display: none; }
+
+/* Control rows */
+.ctrl-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.ctrl-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.ctrl-head span:first-child {
+  font-size: 0.74rem;
+  letter-spacing: 0.05em;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+}
+.ctrl-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.76rem;
+  color: var(--accent);
+}
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* Swatches */
+.swatch-row {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+.swatch {
+  width: 19px; height: 19px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.12s, border-color 0.14s, box-shadow 0.14s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.14);
+  flex-shrink: 0;
+}
+.swatch:hover { transform: scale(1.22); }
+.swatch.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-lt);
+}
+.swatch-transparent {
+  background-image:
+    linear-gradient(45deg, #ccc 25%, transparent 25%),
+    linear-gradient(-45deg, #ccc 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #ccc 75%),
+    linear-gradient(-45deg, transparent 75%, #ccc 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+  background-color: #fff;
+}
+
+/* Buttons */
+button {
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 400;
+  font-size: 0.76rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s, box-shadow 0.14s;
+  white-space: nowrap;
+}
+button:hover { background: var(--accent); color: #fff; box-shadow: var(--shadow); }
+button:disabled { opacity: 0.36; cursor: not-allowed; pointer-events: none; }
+button.primary { background: var(--accent); color: #fff; }
+button.primary:hover { background: var(--accent-dk); }
+button.ghost { border-color: var(--border); color: var(--ink-muted); }
+button.ghost:hover { background: var(--accent-lt); color: var(--accent); border-color: var(--accent); box-shadow: none; }
+
+.btn-row { display: flex; gap: 0.45rem; flex-wrap: wrap; }
+
+/* Progress */
+.progress-bar {
+  width: 100%;
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+#status {
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  font-family: 'DM Mono', monospace;
+  min-height: 1em;
+  margin-top: 0.35rem;
+}
+
+.divider { border: none; border-top: 1px solid var(--border); }
+
+/* Credits */
+.credits {
+  font-size: 0.67rem;
+  color: var(--ink-muted);
+  line-height: 1.75;
+}
+.credits a { color: var(--accent); text-decoration: none; }
+.credits a:hover { text-decoration: underline; }
+
+/* ── RIGHT panel ───────────────────────────────────────── */
+.panel-right {
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  overflow: auto;
+}
+
+/* Checkerboard frame to visualize transparency */
+.canvas-frame {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image:
+    linear-gradient(45deg, #e2e2e2 25%, transparent 25%),
+    linear-gradient(-45deg, #e2e2e2 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e2e2e2 75%),
+    linear-gradient(-45deg, transparent 75%, #e2e2e2 75%);
+  background-size: 18px 18px;
+  background-position: 0 0, 0 9px, 9px -9px, -9px 0;
+  background-color: #f0f0f0;
+}
+
+canvas#output {
+  display: block;
+  max-width: 100%;
+  max-height: 68vh;
+  width: auto;
+  height: auto;
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  color: var(--ink-muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  padding: 5rem 3rem;
+  text-align: center;
+}
+.placeholder svg { opacity: 0.22; }
+
+/* ── Footer ────────────────────────────────────────────── */
+footer {
+  text-align: center;
+  padding: 0.8rem 2rem;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 0.71rem;
+  color: var(--ink-muted);
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+.heart {
+  display: inline-block;
+  color: var(--heart);
+  animation: heartbeat 1.4s ease-in-out infinite;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  14%       { transform: scale(1.38); opacity: 1; }
+  28%       { transform: scale(1);    opacity: 0.85; }
+  42%       { transform: scale(1.22); opacity: 1; }
+  60%       { transform: scale(1);    opacity: 1; }
+}
+
+/* ── About modal ───────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(61,66,81,0.42);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 1.5rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 50px rgba(94,129,172,0.18);
+  max-width: 510px;
+  width: 100%;
+  padding: 2rem 2.2rem 1.8rem;
+  position: relative;
+  transform: translateY(18px);
+  transition: transform 0.22s;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+
+.modal h2 {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--accent);
+  letter-spacing: 0.07em;
+  margin-bottom: 1.1rem;
+}
+.modal p {
+  font-size: 0.86rem;
+  color: var(--ink);
+  line-height: 1.78;
+  margin-bottom: 1rem;
+}
+.modal a { color: var(--accent); text-decoration: none; }
+.modal a:hover { text-decoration: underline; }
+.modal-close {
+  position: absolute;
+  top: 0.9rem; right: 1rem;
+  border: none;
+  background: transparent;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: var(--ink-muted);
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1;
+}
+.modal-close:hover { color: var(--ink); background: var(--accent-lt); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ TOP BAR ════════════════════════════ -->
+<header class="topbar">
+  <div class="topbar-title">
+    <h1>Voronoi <span>Stippling</span></h1>
+    <p>Retratos por puntos · algoritmo de Lloyd ponderado</p>
+  </div>
+  <div class="topbar-actions">
+    <button class="ghost" id="btnAbout">Acerca de</button>
+  </div>
+</header>
+
+<!-- ═══════════════════ WORKSPACE ══════════════════════════ -->
+<main class="workspace">
+
+  <!-- ── LEFT: controls ──────────────────────────────────── -->
+  <aside class="panel-left">
+
+    <!-- Imagen -->
+    <div>
+      <div class="section-label">Imagen</div>
+      <div class="upload-zone" id="dropZone">
+        <input type="file" id="fileInput" accept="image/*">
+        <span id="dropLabel">Arrastra una imagen aquí<br>o haz clic para seleccionar</span>
+      </div>
+    </div>
+
+    <!-- Parámetros -->
+    <div>
+      <div class="section-label">Parámetros</div>
+      <div style="display:flex;flex-direction:column;gap:0.9rem;">
+
+        <div class="ctrl-row">
+          <div class="ctrl-head">
+            <span>Puntos</span>
+            <span class="ctrl-val" id="nPointsVal">3000</span>
+          </div>
+          <input type="range" id="nPoints" min="500" max="8000" step="100" value="3000">
+        </div>
+
+        <div class="ctrl-row">
+          <div class="ctrl-head">
+            <span>Iteraciones</span>
+            <span class="ctrl-val" id="nIterVal">30</span>
+          </div>
+          <input type="range" id="nIter" min="5" max="80" step="5" value="30">
+        </div>
+
+        <div class="ctrl-row">
+          <div class="ctrl-head">
+            <span>Radio del punto</span>
+            <span class="ctrl-val" id="dotRadiusVal">1.5 px</span>
+          </div>
+          <input type="range" id="dotRadius" min="0.5" max="5" step="0.25" value="1.5">
+        </div>
+
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Apariencia -->
+    <div>
+      <div class="section-label">Apariencia</div>
+      <div style="display:flex;flex-direction:column;gap:0.9rem;">
+
+        <div>
+          <div style="font-size:0.72rem;letter-spacing:0.06em;color:var(--ink-muted);text-transform:uppercase;margin-bottom:0.3rem;">Color de puntos</div>
+          <div class="swatch-row" id="swatches">
+            <div class="swatch active" data-color="#000000" style="background:#000000" title="Negro"></div>
+            <div class="swatch" data-color="#3d4251" style="background:#3d4251" title="Grafito"></div>
+            <div class="swatch" data-color="#5e81ac" style="background:#5e81ac" title="Azul acento"></div>
+            <div class="swatch" data-color="#bf616a" style="background:#bf616a" title="Rojo Nord"></div>
+            <div class="swatch" data-color="#a3be8c" style="background:#a3be8c" title="Verde musgo"></div>
+            <div class="swatch" data-color="#d08770" style="background:#d08770" title="Naranja Nord"></div>
+            <div class="swatch" data-color="#ffffff" style="background:#ffffff;outline:1px solid #dde0ee;" title="Blanco"></div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size:0.72rem;letter-spacing:0.06em;color:var(--ink-muted);text-transform:uppercase;margin-bottom:0.3rem;">Fondo</div>
+          <div class="swatch-row" id="bgSwatches">
+            <div class="swatch swatch-transparent active" data-color="transparent" title="Transparente"></div>
+            <div class="swatch" data-color="#ffffff" style="background:#ffffff;outline:1px solid #dde0ee;" title="Blanco"></div>
+            <div class="swatch" data-color="#f6f7fd" style="background:#f6f7fd;outline:1px solid #dde0ee;" title="Lavanda pálida"></div>
+            <div class="swatch" data-color="#2e3440" style="background:#2e3440" title="Noche Nord"></div>
+            <div class="swatch" data-color="#1a1510" style="background:#1a1510" title="Sepia oscuro"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Ejecución -->
+    <div>
+      <div class="section-label">Ejecución</div>
+      <div class="btn-row">
+        <button class="primary" id="btnRun" disabled>▶ Generar</button>
+        <button id="btnStop" disabled>◼ Detener</button>
+        <button class="ghost" id="btnDemo">Demo</button>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div id="status">Carga una imagen para comenzar.</div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Exportar -->
+    <div>
+      <div class="section-label">Exportar</div>
+      <div class="btn-row">
+        <button id="btnSavePNG"       disabled>↓ PNG</button>
+        <button id="btnSavePNGTransp" disabled>↓ PNG transp.</button>
+        <button id="btnSaveSVG"       disabled>↓ SVG</button>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Créditos -->
+    <div class="credits">
+      Implementación por <strong>Francisco Guadarrama</strong><br>
+      Basado en <a href="https://observablehq.com/@mbostock/voronoi-stippling" target="_blank" rel="noopener">Voronoi Stippling</a> de Mike Bostock.<br>
+      Artículo original: <a href="https://www.cs.ubc.ca/labs/imager/tr/2002/secord2002b/secord.2002b.pdf" target="_blank" rel="noopener">Secord (2002)</a>.
+      Usa <a href="https://github.com/d3/d3-delaunay" target="_blank" rel="noopener">d3-delaunay</a>.
+    </div>
+
+  </aside>
+
+  <!-- ── RIGHT: output canvas ────────────────────────────── -->
+  <section class="panel-right">
+    <div class="canvas-frame" id="canvasFrame">
+      <div class="placeholder" id="placeholder">
+        <!-- Simple SVG icon made of dots -->
+        <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="30" cy="30" r="29" stroke="#5e81ac" stroke-width="1.2"/>
+          <circle cx="20" cy="25" r="2.8" fill="#5e81ac"/>
+          <circle cx="30" cy="19" r="2.8" fill="#5e81ac"/>
+          <circle cx="40" cy="25" r="2.8" fill="#5e81ac"/>
+          <circle cx="15" cy="35" r="2"   fill="#5e81ac"/>
+          <circle cx="23" cy="40" r="2.4" fill="#5e81ac"/>
+          <circle cx="37" cy="40" r="2"   fill="#5e81ac"/>
+          <circle cx="44" cy="33" r="2"   fill="#5e81ac"/>
+          <circle cx="30" cy="44" r="2"   fill="#5e81ac"/>
+          <circle cx="10" cy="28" r="1.4" fill="#5e81ac"/>
+          <circle cx="50" cy="28" r="1.4" fill="#5e81ac"/>
+        </svg>
+        <span>El retrato aparecerá aquí</span>
+      </div>
+      <canvas id="output" width="640" height="480" style="display:none;"></canvas>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════ FOOTER ════════════════════════════ -->
+<footer>
+  <span>Made with</span>
+  <span class="heart" aria-label="amor">♥</span>
+  <span>by Fran</span>
+</footer>
+
+<!-- ═══════════════════ ABOUT MODAL ═══════════════════════ -->
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <button class="modal-close" id="modalClose" aria-label="Cerrar">×</button>
+    <h2 id="modalTitle">// acerca_de</h2>
+    <p>
+      <strong>Voronoi Stippling</strong> convierte cualquier imagen en un retrato compuesto únicamente
+      por puntos, imitando la técnica artística del <em>puntillismo</em>. El algoritmo,
+      descrito originalmente por
+      <a href="https://www.cs.ubc.ca/labs/imager/tr/2002/secord2002b/secord.2002b.pdf" target="_blank" rel="noopener">Adrian Secord (2002)</a>,
+      divide el plano en regiones de Voronoi — cada punto "posee" la zona más cercana a él —
+      y luego mueve cada punto hacia el centroide de su celda <em>ponderado</em> por la
+      oscuridad de los píxeles que contiene. Así los puntos migran hacia las zonas oscuras
+      de la imagen y se alejan de las claras, creando una distribución de tono sin usar
+      ningún trazo continuo. Este proceso iterativo se llama <strong>relajación de Lloyd</strong>
+      y converge en pocas decenas de pasos.
+    </p>
+    <p>
+      La implementación usa
+      <a href="https://observablehq.com/@mbostock/voronoi-stippling" target="_blank" rel="noopener">el cuaderno de Mike Bostock en Observable</a>
+      como referencia y la librería
+      <a href="https://github.com/d3/d3-delaunay" target="_blank" rel="noopener">d3-delaunay</a>
+      para triangulación de Delaunay en el navegador, sin dependencias adicionales.
+    </p>
+    <p style="font-size:0.74rem;color:var(--ink-muted);">
+      Implementación por Francisco Guadarrama · INCMNSZ · 2025
+    </p>
+    <button class="primary" id="modalCloseBtn" style="margin-top:0.3rem;">Cerrar</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ JAVASCRIPT ════════════════════════ -->
+<script type="module">
+import { Delaunay } from "https://cdn.jsdelivr.net/npm/d3-delaunay@6/+esm";
+
+// ── State ─────────────────────────────────────────────────
+let imageData = null;   // Float64Array: weight per pixel (0=white, 1=black)
+let imgW = 0, imgH = 0;
+let running   = false;
+let stopFlag  = false;
+let dotColor  = "#000000";
+let bgColor   = "transparent";
+let lastPts   = null;   // saved after run → used for export
+let lastN     = 0;
+let lastR     = 1.5;
+
+// ── DOM refs ──────────────────────────────────────────────
+const canvas          = document.getElementById("output");
+const ctx             = canvas.getContext("2d");
+const placeholder     = document.getElementById("placeholder");
+const btnRun          = document.getElementById("btnRun");
+const btnStop         = document.getElementById("btnStop");
+const btnDemo         = document.getElementById("btnDemo");
+const btnSavePNG      = document.getElementById("btnSavePNG");
+const btnSavePNGTransp= document.getElementById("btnSavePNGTransp");
+const btnSaveSVG      = document.getElementById("btnSaveSVG");
+const status          = document.getElementById("status");
+const progressFill    = document.getElementById("progressFill");
+const dropZone        = document.getElementById("dropZone");
+const fileInput       = document.getElementById("fileInput");
+const dropLabel       = document.getElementById("dropLabel");
+
+// ── Slider wiring ─────────────────────────────────────────
+function wire(id, valId, suffix) {
+  const sl = document.getElementById(id);
+  const vl = document.getElementById(valId);
+  sl.addEventListener("input", () => { vl.textContent = sl.value + suffix; });
+  return sl;
+}
+const slN      = wire("nPoints",   "nPointsVal", "");
+const slIter   = wire("nIter",     "nIterVal",   "");
+const slRadius = wire("dotRadius", "dotRadiusVal"," px");
+
+// ── Color swatches ────────────────────────────────────────
+document.getElementById("swatches").addEventListener("click", e => {
+  const sw = e.target.closest(".swatch");
+  if (!sw) return;
+  document.querySelectorAll("#swatches .swatch").forEach(s => s.classList.remove("active"));
+  sw.classList.add("active");
+  dotColor = sw.dataset.color;
+});
+
+document.getElementById("bgSwatches").addEventListener("click", e => {
+  const sw = e.target.closest(".swatch");
+  if (!sw) return;
+  document.querySelectorAll("#bgSwatches .swatch").forEach(s => s.classList.remove("active"));
+  sw.classList.add("active");
+  bgColor = sw.dataset.color;
+});
+
+// ── Image loading ─────────────────────────────────────────
+function loadImageFromElement(img) {
+  // Cap to 640px wide for performance
+  const maxW  = 640;
+  const scale = img.naturalWidth > maxW ? maxW / img.naturalWidth : 1;
+  imgW = Math.round(img.naturalWidth  * scale);
+  imgH = Math.round(img.naturalHeight * scale);
+
+  // Read pixel data from an off-screen canvas
+  const tmp  = document.createElement("canvas");
+  tmp.width  = imgW;
+  tmp.height = imgH;
+  const tc   = tmp.getContext("2d");
+  tc.drawImage(img, 0, 0, imgW, imgH);
+  const raw  = tc.getImageData(0, 0, imgW, imgH).data;
+
+  // Convert to stipple weight: 0 = white (no dot), 1 = black (dot here)
+  // Perceptual luminance via ITU-R BT.709 coefficients
+  imageData = new Float64Array(imgW * imgH);
+  for (let i = 0; i < imgW * imgH; i++) {
+    const r = raw[i*4], g = raw[i*4+1], b = raw[i*4+2];
+    const lum = 0.2126*r + 0.7152*g + 0.0722*b;
+    imageData[i] = Math.max(0, 1 - lum / 254);
+  }
+
+  // Resize visible canvas and show it
+  canvas.width  = imgW;
+  canvas.height = imgH;
+  placeholder.style.display = "none";
+  canvas.style.display      = "block";
+
+  // Show image preview
+  ctx.drawImage(img, 0, 0, imgW, imgH);
+  setStatus("Imagen cargada · listo para generar.");
+  btnRun.disabled = false;
+  disableExport();
+}
+
+function loadFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      dropLabel.innerHTML = `${file.name}<br>${img.naturalWidth}×${img.naturalHeight} px`;
+      loadImageFromElement(img);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Drag & drop / file input ──────────────────────────────
+dropZone.addEventListener("click",     () => fileInput.click());
+fileInput.addEventListener("change",   () => { if (fileInput.files[0]) loadFile(fileInput.files[0]); });
+dropZone.addEventListener("dragover",  e  => { e.preventDefault(); dropZone.classList.add("drag-over"); });
+dropZone.addEventListener("dragleave", () => dropZone.classList.remove("drag-over"));
+dropZone.addEventListener("drop", e => {
+  e.preventDefault();
+  dropZone.classList.remove("drag-over");
+  if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
+});
+
+// ── Demo: synthetic gradient portrait ────────────────────
+btnDemo.addEventListener("click", () => {
+  const dW = 400, dH = 500;
+  const tmp = document.createElement("canvas");
+  tmp.width = dW; tmp.height = dH;
+  const tc = tmp.getContext("2d");
+
+  tc.fillStyle = "#fff";
+  tc.fillRect(0, 0, dW, dH);
+
+  const g1 = tc.createRadialGradient(200,210,30, 200,210,180);
+  g1.addColorStop(0,   "rgba(20,20,20,1)");
+  g1.addColorStop(0.6, "rgba(60,60,60,0.85)");
+  g1.addColorStop(1,   "rgba(255,255,255,0)");
+  tc.fillStyle = g1; tc.fillRect(0,0,dW,dH);
+
+  tc.save(); tc.translate(200,220); tc.scale(1,1.25);
+  tc.beginPath(); tc.arc(0,0,110,0,Math.PI*2); tc.restore();
+  const g2 = tc.createRadialGradient(200,180,10, 200,220,115);
+  g2.addColorStop(0,   "rgba(10,10,10,0.9)");
+  g2.addColorStop(0.5, "rgba(40,40,40,0.5)");
+  g2.addColorStop(1,   "rgba(200,200,200,0)");
+  tc.fillStyle = g2; tc.fill();
+
+  [[160,195],[240,195]].forEach(([x,y]) => {
+    const eg = tc.createRadialGradient(x,y,2, x,y,18);
+    eg.addColorStop(0,"rgba(0,0,0,1)");
+    eg.addColorStop(1,"rgba(0,0,0,0)");
+    tc.fillStyle = eg;
+    tc.beginPath(); tc.arc(x,y,18,0,Math.PI*2); tc.fill();
+  });
+
+  const img = new Image();
+  img.onload = () => {
+    dropLabel.innerHTML = "Demo · retrato sintético";
+    loadImageFromElement(img);
+  };
+  img.src = tmp.toDataURL();
+});
+
+// ── Algorithm: rejection sampling for initial placement ───
+// Darker pixels have higher probability of being chosen
+function samplePoints(n) {
+  const pts = new Float64Array(n * 2);
+  let placed = 0, attempts = 0;
+  const maxAttempts = n * 50;
+
+  while (placed < n && attempts < maxAttempts) {
+    const x  = Math.random() * imgW;
+    const y  = Math.random() * imgH;
+    const ix = Math.floor(x), iy = Math.floor(y);
+    if (ix < 0 || ix >= imgW || iy < 0 || iy >= imgH) { attempts++; continue; }
+    const w  = imageData[iy * imgW + ix];
+    if (Math.random() < w) {
+      pts[placed*2] = x; pts[placed*2+1] = y; placed++;
+    }
+    attempts++;
+  }
+  // Safety fill: random points for images with very light areas
+  for (let i = placed; i < n; i++) {
+    pts[i*2] = Math.random() * imgW; pts[i*2+1] = Math.random() * imgH;
+  }
+  return pts;
+}
+
+// ── Algorithm: one weighted Lloyd relaxation step ─────────
+// Move each point to the brightness-weighted centroid of its Voronoi cell
+function lloydStep(pts, n) {
+  const delaunay = Delaunay.from(
+    { length: n },
+    (_, i) => pts[i*2],
+    (_, i) => pts[i*2+1]
+  );
+  delaunay.voronoi([0, 0, imgW, imgH]); // build the diagram
+
+  const newPts  = new Float64Array(n * 2);
+  const weights = new Float64Array(n);
+
+  // Scan every pixel, accumulate (weight × position) into owning cell
+  for (let py = 0; py < imgH; py++) {
+    for (let px = 0; px < imgW; px++) {
+      const w = imageData[py * imgW + px];
+      if (w <= 0) continue;
+      const idx = delaunay.find(px + 0.5, py + 0.5);
+      newPts[idx*2]   += w * (px + 0.5);
+      newPts[idx*2+1] += w * (py + 0.5);
+      weights[idx]    += w;
+    }
+  }
+
+  // Divide by total weight to get weighted centroid
+  for (let i = 0; i < n; i++) {
+    if (weights[i] > 0) {
+      newPts[i*2]   /= weights[i];
+      newPts[i*2+1] /= weights[i];
+    } else {
+      // Cell with zero weight: stay in place
+      newPts[i*2] = pts[i*2]; newPts[i*2+1] = pts[i*2+1];
+    }
+  }
+  return newPts;
+}
+
+// ── Draw stipples onto canvas ─────────────────────────────
+function drawStipples(pts, n, r) {
+  ctx.clearRect(0, 0, imgW, imgH);  // always clear first (handles transparency)
+  if (bgColor !== "transparent") {
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, imgW, imgH);
+  }
+  ctx.fillStyle = dotColor;
+  ctx.beginPath();
+  for (let i = 0; i < n; i++) {
+    const x = pts[i*2], y = pts[i*2+1];
+    ctx.moveTo(x + r, y);
+    ctx.arc(x, y, r, 0, 2 * Math.PI);
+  }
+  ctx.fill();
+}
+
+// ── UI helpers ────────────────────────────────────────────
+function setStatus(msg)  { status.textContent = msg; }
+function setProgress(f)  { progressFill.style.width = (f * 100).toFixed(1) + "%"; }
+function enableExport()  { [btnSavePNG,btnSavePNGTransp,btnSaveSVG].forEach(b => b.disabled = false); }
+function disableExport() { [btnSavePNG,btnSavePNGTransp,btnSaveSVG].forEach(b => b.disabled = true); }
+// Yield to browser event loop so the UI can repaint between iterations
+function tick() { return new Promise(r => setTimeout(r, 0)); }
+
+// ── Run button ────────────────────────────────────────────
+btnRun.addEventListener("click", async () => {
+  if (!imageData) return;
+  running = true; stopFlag = false;
+
+  const n  = parseInt(slN.value, 10);
+  const it = parseInt(slIter.value, 10);
+  const r  = parseFloat(slRadius.value);
+
+  btnRun.disabled  = true;
+  btnStop.disabled = false;
+  disableExport();
+  setProgress(0);
+  setStatus("Muestreando puntos iniciales…");
+  await tick();
+
+  let pts = samplePoints(n);
+  drawStipples(pts, n, r);
+  setStatus(`iter 0/${it} · ${n} pts`);
+  await tick();
+
+  for (let i = 1; i <= it; i++) {
+    if (stopFlag) { setStatus(`Detenido en iter ${i-1}.`); break; }
+    setStatus(`iter ${i}/${it} · relajando Voronoi…`);
+    setProgress(i / it);
+    await tick();
+    pts = lloydStep(pts, n);
+    drawStipples(pts, n, r);
+    await tick();
+  }
+
+  // Save result for export buttons
+  lastPts = pts; lastN = n; lastR = r;
+
+  if (!stopFlag) {
+    setStatus(`Listo · ${n} pts · ${it} iter.`);
+    setProgress(1);
+  }
+
+  running = false;
+  btnRun.disabled  = false;
+  btnStop.disabled = true;
+  enableExport();
+});
+
+// ── Stop button ───────────────────────────────────────────
+btnStop.addEventListener("click", () => {
+  stopFlag = true;
+  btnStop.disabled = true;
+  enableExport();
+});
+
+// ── Export: PNG with current background ──────────────────
+btnSavePNG.addEventListener("click", () => {
+  const link    = document.createElement("a");
+  link.download = "stippling.png";
+  link.href     = canvas.toDataURL("image/png");
+  link.click();
+});
+
+// ── Export: PNG with forced transparent background ───────
+btnSavePNGTransp.addEventListener("click", () => {
+  if (!lastPts) return;
+  const tmp = document.createElement("canvas");
+  tmp.width = imgW; tmp.height = imgH;
+  const tc  = tmp.getContext("2d");
+  // Draw only the dots, no background fill
+  tc.fillStyle = dotColor;
+  tc.beginPath();
+  for (let i = 0; i < lastN; i++) {
+    const x = lastPts[i*2], y = lastPts[i*2+1];
+    tc.moveTo(x + lastR, y);
+    tc.arc(x, y, lastR, 0, 2 * Math.PI);
+  }
+  tc.fill();
+  const link    = document.createElement("a");
+  link.download = "stippling-transparente.png";
+  link.href     = tmp.toDataURL("image/png");
+  link.click();
+});
+
+// ── Export: SVG vector file ───────────────────────────────
+// Each dot becomes a <circle> element — fully scalable, editable in Illustrator / Inkscape
+btnSaveSVG.addEventListener("click", () => {
+  if (!lastPts) return;
+  const r = lastR;
+
+  let svg = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+  svg += `<!-- Voronoi Stippling · Implementación por Francisco Guadarrama -->\n`;
+  svg += `<svg xmlns="http://www.w3.org/2000/svg" `;
+  svg += `width="${imgW}" height="${imgH}" viewBox="0 0 ${imgW} ${imgH}">\n`;
+
+  // Background rect only when not transparent
+  if (bgColor !== "transparent") {
+    svg += `  <rect width="${imgW}" height="${imgH}" fill="${bgColor}"/>\n`;
+  }
+
+  // All dots in a single group
+  svg += `  <g fill="${dotColor}">\n`;
+  for (let i = 0; i < lastN; i++) {
+    const x = lastPts[i*2].toFixed(2);
+    const y = lastPts[i*2+1].toFixed(2);
+    svg += `    <circle cx="${x}" cy="${y}" r="${r}"/>\n`;
+  }
+  svg += `  </g>\n</svg>`;
+
+  const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+  const url  = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.download = "stippling.svg";
+  link.href     = url;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+});
+
+// ── About modal ───────────────────────────────────────────
+const overlay       = document.getElementById("modalOverlay");
+const btnAbout      = document.getElementById("btnAbout");
+const modalClose    = document.getElementById("modalClose");
+const modalCloseBtn = document.getElementById("modalCloseBtn");
+
+const openModal  = () => overlay.classList.add("open");
+const closeModal = () => overlay.classList.remove("open");
+
+btnAbout.addEventListener("click",      openModal);
+modalClose.addEventListener("click",    closeModal);
+modalCloseBtn.addEventListener("click", closeModal);
+overlay.addEventListener("click", e => { if (e.target === overlay) closeModal(); });
+document.addEventListener("keydown",    e => { if (e.key === "Escape") closeModal(); });
+</script>
+</body>
+</html>
