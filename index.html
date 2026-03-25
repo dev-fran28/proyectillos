@@ -21,6 +21,8 @@
       --muted:         color(display-p3 0.38  0.38  0.44);
       --accent:        color(display-p3 0.196 0.161 0.745);
       --accent-bright: color(display-p3 0.38  0.32  0.94);
+      /* #c7e44c lime accent */
+      --lime: color(display-p3 0.749 0.886 0.271);
       --card-w: 580px;
       --card-h: 700px;
     }
@@ -61,20 +63,28 @@
       backdrop-filter: blur(14px);
     }
     .logo { font-weight: 600; font-size: 15px; letter-spacing: 0.04em; color: var(--accent-bright); }
-    .logo span { color: var(--fg); opacity: 0.4; }
+    .logo span { color: var(--lime); opacity: 1; }
     nav { display: flex; gap: 32px; font-size: 12px; letter-spacing: 0.1em; color: var(--muted); }
     nav a { color: inherit; text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
     nav a:hover { color: var(--accent-bright); }
 
     /* HERO */
-    .hero {
-      padding: 100px 48px 72px;
-      max-width: 1100px; margin: 0 auto; position: relative;
+    /* Side-by-side hero layout */
+    .hero-split {
+      max-width: 1100px; margin: 0 auto;
+      padding: 80px 48px 60px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 64px;
+    }
+    .hero-text {
+      display: flex; flex-direction: column; gap: 0;
     }
     .hero-eyebrow {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
-      color: var(--accent-bright); margin-bottom: 22px;
+      color: var(--lime); margin-bottom: 22px;
       opacity: 0; animation: fadeUp 0.6s 0.1s forwards;
     }
     .hero-title {
@@ -101,6 +111,16 @@
       font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
       color: var(--muted); white-space: nowrap;
     }
+    .section-label span::before {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--lime);
+      margin-right: 10px;
+      vertical-align: middle;
+      opacity: 0.9;
+    }
     .section-label::after {
       content: ''; flex: 1; height: 1px;
       background: linear-gradient(to right, color(display-p3 0.196 0.161 0.745 / 0.25), transparent);
@@ -108,9 +128,10 @@
 
     /* HERO CARD */
     .hero-card-section {
-      max-width: 1100px; margin: 0 auto;
-      padding: 0 48px 80px;
-      display: flex; justify-content: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
     }
 
     .card-container {
@@ -226,6 +247,9 @@
       letter-spacing: 0;
       display: block;
       max-width: 100%;
+      user-select: none;
+      -webkit-user-select: none;
+      pointer-events: none;
     }
 
     .divider {
@@ -275,7 +299,7 @@
     .project-row:nth-child(5){animation-delay:0.9s}
     .project-row:hover {
       padding-left: 18px;
-      background: color(display-p3 0.196 0.161 0.745 / 0.06);
+      background: color(display-p3 0.749 0.886 0.271 / 0.04);
     }
     .project-row:hover .project-arrow { opacity: 1; transform: translateX(4px); }
     .project-meta { display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; }
@@ -283,11 +307,11 @@
     .project-tag {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--accent-bright); opacity: 0.65;
+      color: var(--lime); opacity: 0.8;
     }
     .project-desc { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
     .project-arrow {
-      font-size: 16px; color: var(--accent-bright); opacity: 0.3; flex-shrink: 0;
+      font-size: 16px; color: var(--lime); opacity: 0.35; flex-shrink: 0;
       transition: opacity 0.18s, transform 0.18s;
     }
 
@@ -310,23 +334,29 @@
 
     /* cursor */
     .cursor {
-      width: 6px; height: 6px; background: var(--accent-bright);
+      width: 6px; height: 6px; background: var(--lime);
       border-radius: 50%; position: fixed; pointer-events: none;
       z-index: 10000; mix-blend-mode: screen;
     }
 
     /* RESPONSIVE */
-    @media (max-width: 860px) {
-      :root { --card-w: 100%; --card-h: 520px; }
+    @media (max-width: 900px) {
+      :root { --card-w: 420px; --card-h: 540px; }
+      .hero-split {
+        grid-template-columns: 1fr;
+        padding: 60px 24px 40px;
+        gap: 40px;
+      }
+      .hero-card-section { width: 100%; justify-content: center; }
       header { padding: 18px 24px; }
-      .hero { padding: 72px 24px 52px; }
-      .section-label, .hero-card-section, .projects-section { padding-left: 24px; padding-right: 24px; }
+      .section-label, .projects-section { padding-left: 24px; padding-right: 24px; }
     }
     @media (max-width: 480px) {
-      :root { --card-h: 400px; }
+      :root { --card-w: 100%; --card-h: 400px; }
       nav { gap: 18px; font-size: 11px; }
       footer { padding: 22px 24px; flex-direction: column; gap: 6px; text-align: center; }
       .project-name { font-size: 15px; }
+      .hero-split { padding: 48px 20px 32px; gap: 32px; }
     }
   </style>
 </head>
@@ -336,27 +366,17 @@
 
   <svg style="position:absolute;width:0;height:0;overflow:hidden;">
     <defs>
-      <filter id="turbulent-displace" colorInterpolationFilters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
-        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="1"/>
+      <filter id="turbulent-displace" colorInterpolationFilters="sRGB" x="-15%" y="-15%" width="130%" height="130%">
+        <feTurbulence type="turbulence" baseFrequency="0.018" numOctaves="3" result="noise1" seed="1"/>
         <feOffset in="noise1" dx="0" dy="0" result="offsetNoise1">
-          <animate attributeName="dy" values="700; 0" dur="6s" repeatCount="indefinite" calcMode="linear"/>
+          <animate attributeName="dy" values="700; 0" dur="8s" repeatCount="indefinite" calcMode="linear"/>
         </feOffset>
-        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="1"/>
+        <feTurbulence type="turbulence" baseFrequency="0.018" numOctaves="3" result="noise2" seed="3"/>
         <feOffset in="noise2" dx="0" dy="0" result="offsetNoise2">
-          <animate attributeName="dy" values="0; -700" dur="6s" repeatCount="indefinite" calcMode="linear"/>
+          <animate attributeName="dx" values="490; 0" dur="8s" repeatCount="indefinite" calcMode="linear"/>
         </feOffset>
-        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="2"/>
-        <feOffset in="noise1" dx="0" dy="0" result="offsetNoise3">
-          <animate attributeName="dx" values="490; 0" dur="6s" repeatCount="indefinite" calcMode="linear"/>
-        </feOffset>
-        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="2"/>
-        <feOffset in="noise2" dx="0" dy="0" result="offsetNoise4">
-          <animate attributeName="dx" values="0; -490" dur="6s" repeatCount="indefinite" calcMode="linear"/>
-        </feOffset>
-        <feComposite in="offsetNoise1" in2="offsetNoise2" result="part1"/>
-        <feComposite in="offsetNoise3" in2="offsetNoise4" result="part2"/>
-        <feBlend in="part1" in2="part2" mode="color-dodge" result="combinedNoise"/>
-        <feDisplacementMap in="SourceGraphic" in2="combinedNoise" scale="30" xChannelSelector="R" yChannelSelector="B"/>
+        <feBlend in="offsetNoise1" in2="offsetNoise2" mode="multiply" result="combinedNoise"/>
+        <feDisplacementMap in="SourceGraphic" in2="combinedNoise" scale="22" xChannelSelector="R" yChannelSelector="G"/>
       </filter>
     </defs>
   </svg>
@@ -369,17 +389,13 @@
     </nav>
   </header>
 
-  <section class="hero">
-    <p class="hero-eyebrow">// f-gc.dev</p>
-    <h1 class="hero-title">tiny tools.<br><em>real problems.</em></h1>
-    <p class="hero-tagline">clinician · builder · <a href="https://fguadarrama.com/cv" target="_blank" rel="noopener">academic cv ↗</a></p>
-  </section>
-
-  <div class="section-label">
-    <span>// portrait</span>
-  </div>
-
-  <div class="hero-card-section">
+  <section class="hero-split">
+    <div class="hero-text">
+      <p class="hero-eyebrow">// f-gc.dev</p>
+      <h1 class="hero-title">tiny tools.<br><em>real problems.</em></h1>
+      <p class="hero-tagline">clinician · builder · <a href="https://fguadarrama.com/cv" target="_blank" rel="noopener">academic cv ↗</a></p>
+    </div>
+    <div class="hero-card-section">
     <div class="card-container">
       <div class="inner-container">
         <div class="border-outer">
@@ -405,7 +421,8 @@
         </div>
       </div>
     </div>
-  </div>
+    </div><!-- hero-card-section -->
+  </section><!-- hero-split -->
 
   <div class="section-label" id="projects">
     <span>// projects</span>
@@ -414,7 +431,7 @@
   <section class="projects-section">
     <div class="project-list">
 
-      <a href="#" class="project-row">
+      <a href="https://fguadarrama.com/castorcopiador" target="_blank" rel="noopener" class="project-row">
         <div>
           <div class="project-meta">
             <span class="project-name">El Castor Copiador</span>
@@ -425,7 +442,7 @@
         <span class="project-arrow">→</span>
       </a>
 
-      <a href="#" class="project-row">
+      <a href="https://fguadarrama.com/rolesdecanela" target="_blank" rel="noopener" class="project-row">
         <div>
           <div class="project-meta">
             <span class="project-name">Roles de Canela</span>
@@ -436,7 +453,7 @@
         <span class="project-arrow">→</span>
       </a>
 
-      <a href="#" class="project-row">
+      <a href="https://fguadarrama.com/recetador" target="_blank" rel="noopener" class="project-row">
         <div>
           <div class="project-meta">
             <span class="project-name">Recetador</span>
@@ -447,7 +464,7 @@
         <span class="project-arrow">→</span>
       </a>
 
-      <a href="#" class="project-row">
+      <a href="https://fguadarrama.com/coolores" target="_blank" rel="noopener" class="project-row">
         <div>
           <div class="project-meta">
             <span class="project-name">Color Collection</span>
@@ -558,6 +575,12 @@ CIuÍôÎ9fç0Lù©Í±©Î®Sfô©5õ¾&xÝµTàbk©©PÙññÿ$ãÕœRHÀÀÄX
 
     window.addEventListener('load',   fitAscii);
     window.addEventListener('resize', fitAscii);
+
+    // Pause SVG animation when tab is hidden — saves GPU on Safari/mobile
+    const svgAnims = document.querySelectorAll('animate');
+    document.addEventListener('visibilitychange', () => {
+      svgAnims.forEach(a => document.hidden ? a.pauseAnimations() : a.unpauseAnimations());
+    });
 
   </script>
 </body>
