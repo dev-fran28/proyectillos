@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Themes Archive</title>
+    
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Layout & Base Variables */
+            --bg-color: #ECEFF4;
+            --text-color: #2E3440;
+            --surface-color: #FFFFFF;
+            --border-color: #D8DEE9;
+            --accent: #5E81AC;
+            
+            /* Dynamic Code Block Variables (Defaults to Nord) */
+            --code-bg: #2E3440;
+            --code-fg: #D8DEE9;
+            --code-kw: #81A1C1;
+            --code-func: #88C0D0;
+            --code-str: #A3BE8C;
+            --code-com: #4C566A;
+            --code-glow: rgba(129, 161, 193, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--surface-color);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 40px 20px;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.02);
+            z-index: 50;
+        }
+
+        .sidebar h2 {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #4C566A;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-list li {
+            margin-bottom: 8px;
+            opacity: 0;
+            transform: translateX(-15px);
+            animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .nav-list a {
+            text-decoration: none;
+            color: #4C566A;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-list a::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            opacity: 0;
+            margin-right: 0px;
+            transition: all 0.3s ease;
+            transform: scale(0);
+        }
+
+        .nav-list a:hover {
+            color: var(--accent);
+            background-color: var(--bg-color);
+            transform: translateX(4px);
+        }
+
+        .nav-list a:hover::before {
+            opacity: 1;
+            margin-right: 12px;
+            transform: scale(1);
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            margin-left: 260px;
+            padding: 50px;
+            width: calc(100% - 260px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .content-wrapper {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+            animation: fadeInDown 0.6s ease forwards;
+        }
+
+        .page-subtitle {
+            color: #4C566A;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.6s ease 0.1s forwards;
+            opacity: 0;
+        }
+
+        /* --- DYNAMIC CODE PREVIEW --- */
+        .code-preview-container {
+            margin-bottom: 60px;
+            border-radius: 16px;
+            overflow: hidden;
+            background-color: var(--code-bg);
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 20px 50px var(--code-glow), 0 10px 20px rgba(0,0,0,0.05);
+            transition: background-color 0.4s ease, box-shadow 0.4s ease;
+            
+            /* FIXED: Set to backwards fill mode so it doesn't need opacity:0 on base */
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+            transform-origin: center center;
+        }
+
+        .pulse-active {
+            animation: pulseBox 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .window-header {
+            background-color: rgba(0, 0, 0, 0.15);
+            padding: 14px 20px;
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            transition: transform 0.2s ease;
+        }
+        .window-header:hover .dot { transform: scale(1.1); }
+        .dot.red { background-color: #FF5F56; }
+        .dot.yellow { background-color: #FFBD2E; }
+        .dot.green { background-color: #27C93F; }
+
+        pre {
+            padding: 30px;
+            font-family: 'Fira Code', monospace;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--code-fg);
+            transition: color 0.4s ease;
+            overflow-x: auto;
+        }
+
+        .kw { color: var(--code-kw); transition: color 0.4s ease; }
+        .func { color: var(--code-func); transition: color 0.4s ease; }
+        .str { color: var(--code-str); transition: color 0.4s ease; }
+        .com { color: var(--code-com); font-style: italic; transition: color 0.4s ease; }
+
+        /* --- THEME CARDS --- */
+        .theme-section {
+            background-color: var(--surface-color);
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(46, 52, 64, 0.04);
+            border: 1px solid var(--border-color);
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .theme-section:hover {
+            border-color: var(--accent);
+            box-shadow: 0 15px 35px rgba(46, 52, 64, 0.08);
+            transform: translateY(-4px);
+        }
+
+        .theme-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+
+        .theme-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .theme-link {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background-color: var(--bg-color);
+            transition: all 0.3s ease;
+        }
+
+        .theme-link:hover {
+            background-color: var(--accent);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .color-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+
+        .color-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 75px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .color-card:hover {
+            transform: translateY(-10px) scale(1.08);
+        }
+
+        .color-card:active {
+            transform: scale(0.92);
+        }
+
+        .color-chip {
+            width: 75px;
+            height: 75px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+            margin-bottom: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .color-card:hover .color-chip {
+            box-shadow: 0 15px 25px rgba(0,0,0,0.15);
+        }
+
+        .color-hex {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: #4C566A;
+        }
+
+        /* --- TOAST NOTIFICATION --- */
+        #toast {
+            visibility: hidden;
+            min-width: 220px;
+            background-color: var(--text-color);
+            color: #FFF;
+            text-align: center;
+            border-radius: 50px;
+            padding: 16px 28px;
+            position: fixed;
+            z-index: 100;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: 600;
+            box-shadow: 0 15px 30px rgba(46, 52, 64, 0.4);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 50px;
+        }
+
+        /* Animations */
+        @keyframes slideInRight {
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* FIXED: Added opacity: 1 to the end state and 0 to start */
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulseBox {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.015); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <h2>Palette Directory</h2>
+        <ul class="nav-list" id="nav-list">
+            </ul>
+    </nav>
+
+    <main class="main-content">
+        <div class="content-wrapper">
+            
+            <h1 class="page-title">Developer Themes Archive</h1>
+            <p class="page-subtitle">12 highly-curated syntax palettes. Click a card background to preview, click a chip to copy.</p>
+
+            <div class="code-preview-container" id="code-preview">
+                <div class="window-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <pre><code><span class="kw">function</span> <span class="func">initializeThemeEngine</span>() {
+  <span class="com">// Click any theme card background below to update!</span>
+  <span class="kw">const</span> status = <span class="str">"Waiting for input..."</span>;
+  
+  <span class="kw">if</span> (user.clicksCard) {
+    <span class="kw">return</span> <span class="str">"Syntax highlighted successfully!"</span>;
+  }
+}</code></pre>
+            </div>
+
+            <div id="theme-container">
+                </div>
+
+        </div>
+    </main>
+
+    <div id="toast">Copied to clipboard!</div>
+
+    <script>
+        // Exactly 12 Themes, fully mapped with syntax highlighting variables
+        const themes = [
+            {
+                name: "Nord", url: "https://www.nordtheme.com/",
+                colors: ["#2E3440", "#3B4252", "#434C5E", "#4C566A", "#D8DEE9", "#E5E9F0", "#ECEFF4", "#8FBCBB", "#88C0D0", "#81A1C1", "#5E81AC", "#BF616A", "#D08770", "#EBCB8B", "#A3BE8C", "#B48EAD"],
+                syntax: { bg: "#2E3440", fg: "#D8DEE9", kw: "#81A1C1", func: "#88C0D0", str: "#A3BE8C", com: "#4C566A" }
+            },
+            {
+                name: "Dracula", url: "https://draculatheme.com/",
+                colors: ["#282a36", "#44475a", "#f8f8f2", "#6272a4", "#8be9fd", "#50fa7b", "#ffb86c", "#ff79c6", "#bd93f9", "#ff5555", "#f1fa8c"],
+                syntax: { bg: "#282a36", fg: "#f8f8f2", kw: "#ff79c6", func: "#50fa7b", str: "#f1fa8c", com: "#6272a4" }
+            },
+            {
+                name: "Tokyo Night", url: "https://github.com/enkia/tokyo-night-vscode-theme",
+                colors: ["#1a1b26", "#16161e", "#292e42", "#c0caf5", "#a9b1d6", "#565f89", "#f7768e", "#ff9e64", "#e0af68", "#9ece6a", "#7dcfff", "#7aa2f7", "#bb9af7"],
+                syntax: { bg: "#1a1b26", fg: "#c0caf5", kw: "#bb9af7", func: "#7aa2f7", str: "#9ece6a", com: "#565f89" }
+            },
+            {
+                name: "Monokai Dark", url: "https://monokai.nl/",
+                colors: ["#272822", "#3E3D32", "#49483E", "#75715E", "#F8F8F2", "#F92672", "#FD971F", "#E6DB74", "#A6E22E", "#66D9EF", "#AE81FF"],
+                syntax: { bg: "#272822", fg: "#F8F8F2", kw: "#F92672", func: "#A6E22E", str: "#E6DB74", com: "#75715E" }
+            },
+            {
+                name: "Monokai Light", url: "https://monokai.nl/",
+                colors: ["#FAFAFA", "#F2F2F2", "#E6E6E6", "#75715E", "#272822", "#F92672", "#FD971F", "#E6DB74", "#A6E22E", "#66D9EF", "#AE81FF"],
+                syntax: { bg: "#FAFAFA", fg: "#272822", kw: "#F92672", func: "#66D9EF", str: "#E6DB74", com: "#75715E" }
+            },
+            {
+                name: "Catppuccin Mocha", url: "https://catppuccin.com/",
+                colors: ["#1e1e2e", "#181825", "#11111b", "#cdd6f4", "#bac2de", "#a6adc8", "#f5e0dc", "#f2cdcd", "#f5c2e7", "#cba6f7", "#f38ba8", "#eba0ac", "#fab387", "#f9e2af", "#a6e3a1", "#94e2d5", "#89dceb", "#74c7ec", "#89b4fa", "#b4befe"],
+                syntax: { bg: "#1e1e2e", fg: "#cdd6f4", kw: "#cba6f7", func: "#89b4fa", str: "#a6e3a1", com: "#6c7086" }
+            },
+            {
+                name: "Catppuccin Latte", url: "https://catppuccin.com/",
+                colors: ["#eff1f5", "#e6e9ef", "#dce0e8", "#ccd0da", "#bcc0cc", "#acb0be", "#4c4f69", "#d20f39", "#e64553", "#fe640b", "#df8e1d", "#40a02b", "#179299", "#04a5e5", "#209fb5", "#1e66f5", "#7287fd", "#8839ef", "#ea76cb", "#dd7878"],
+                syntax: { bg: "#eff1f5", fg: "#4c4f69", kw: "#8839ef", func: "#1e66f5", str: "#40a02b", com: "#9ca0b0" }
+            },
+            {
+                name: "Gruvbox Dark", url: "https://github.com/morhetz/gruvbox",
+                colors: ["#282828", "#3c3836", "#504945", "#665c54", "#bdae93", "#d5c4a1", "#ebdbb2", "#fbf1c7", "#cc241d", "#fb4934", "#98971a", "#b8bb26", "#d79921", "#fabd2f", "#458588", "#83a598", "#b16286", "#d3869b", "#689d6a", "#8ec07c", "#d65d0e", "#fe8019"],
+                syntax: { bg: "#282828", fg: "#ebdbb2", kw: "#fb4934", func: "#b8bb26", str: "#b16286", com: "#928374" }
+            },
+            {
+                name: "Solarized Dark", url: "https://ethanschoonover.com/solarized",
+                colors: ["#002b36", "#073642", "#586e75", "#657b83", "#839496", "#93a1a1", "#eee8d5", "#fdf6e3", "#b58900", "#cb4b16", "#dc322f", "#d33682", "#6c71c4", "#268bd2", "#2aa198", "#859900"],
+                syntax: { bg: "#002b36", fg: "#839496", kw: "#cb4b16", func: "#268bd2", str: "#2aa198", com: "#586e75" }
+            },
+            {
+                name: "Solarized Light", url: "https://ethanschoonover.com/solarized",
+                colors: ["#fdf6e3", "#eee8d5", "#93a1a1", "#839496", "#657b83", "#586e75", "#073642", "#002b36", "#b58900", "#cb4b16", "#dc322f", "#d33682", "#6c71c4", "#268bd2", "#2aa198", "#859900"],
+                syntax: { bg: "#fdf6e3", fg: "#657b83", kw: "#cb4b16", func: "#268bd2", str: "#2aa198", com: "#93a1a1" }
+            },
+            {
+                name: "One Light", url: "https://github.com/atom/one-light-syntax",
+                colors: ["#fafafa", "#f0f0f1", "#e5e5e6", "#a0a1a7", "#383a42", "#e45649", "#50a14f", "#c18401", "#4078f2", "#a626a4", "#0184bc"],
+                syntax: { bg: "#fafafa", fg: "#383a42", kw: "#a626a4", func: "#4078f2", str: "#50a14f", com: "#a0a1a7" }
+            },
+            {
+                name: "Rosé Pine Dawn", url: "https://rosepinetheme.com/",
+                colors: ["#faf4ed", "#fffaf3", "#f2e9e1", "#dfdad9", "#cecacd", "#9893a5", "#575279", "#b4637a", "#d7827e", "#ea9d34", "#286983", "#56949f", "#907aa9"],
+                syntax: { bg: "#faf4ed", fg: "#575279", kw: "#907aa9", func: "#286983", str: "#ea9d34", com: "#9893a5" }
+            }
+        ];
+
+        const container = document.getElementById('theme-container');
+        const navList = document.getElementById('nav-list');
+        const toast = document.getElementById('toast');
+        const codeBox = document.getElementById('code-preview');
+        const rootVars = document.documentElement.style;
+
+        // Clipboard function
+        function copyToClipboard(hexCode) {
+            navigator.clipboard.writeText(hexCode).then(() => {
+                toast.innerHTML = `Copied <strong>${hexCode}</strong>!`;
+                toast.className = "show";
+                setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 2500);
+            });
+        }
+
+        // Hex to RGBA for the code box glow
+        function hexToRgbA(hex, alpha){
+            let c;
+            if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+                c = hex.substring(1).split('');
+                if(c.length== 3){
+                    c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+                }
+                c= '0x'+c.join('');
+                return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+alpha+')';
+            }
+            return `rgba(0,0,0,${alpha})`;
+        }
+
+        // Apply Syntax Theme to Code Preview dynamically
+        function applySyntaxTheme(themeSyntax) {
+            rootVars.setProperty('--code-bg', themeSyntax.bg);
+            rootVars.setProperty('--code-fg', themeSyntax.fg);
+            rootVars.setProperty('--code-kw', themeSyntax.kw);
+            rootVars.setProperty('--code-func', themeSyntax.func);
+            rootVars.setProperty('--code-str', themeSyntax.str);
+            rootVars.setProperty('--code-com', themeSyntax.com);
+            rootVars.setProperty('--code-glow', hexToRgbA(themeSyntax.kw, 0.25));
+
+            // Trigger the pulse animation to show it updated
+            codeBox.classList.remove('pulse-active');
+            void codeBox.offsetWidth; 
+            codeBox.classList.add('pulse-active');
+            
+            // Scroll back up so the user can see the new syntax colors
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Generate DOM Elements
+        themes.forEach((theme, index) => {
+            const themeId = `theme-${index}`;
+
+            // Build Sidebar Link
+            const li = document.createElement('li');
+            li.style.animationDelay = `${index * 0.05}s`;
+            const a = document.createElement('a');
+            a.href = `#${themeId}`;
+            a.textContent = theme.name;
+            li.appendChild(a);
+            navList.appendChild(li);
+
+            // Build Theme Section
+            const themeSection = document.createElement('div');
+            themeSection.className = 'theme-section';
+            themeSection.id = themeId;
+            
+            // Apply the theme when the background of the card is clicked
+            themeSection.onclick = () => {
+                applySyntaxTheme(theme.syntax);
+            };
+
+            // Header
+            const header = document.createElement('div');
+            header.className = 'theme-header';
+
+            const title = document.createElement('h2');
+            title.className = 'theme-title';
+            title.textContent = theme.name;
+
+            const link = document.createElement('a');
+            link.className = 'theme-link';
+            link.href = theme.url;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.textContent = "Source ↗";
+            link.onclick = (e) => e.stopPropagation(); 
+
+            header.appendChild(title);
+            header.appendChild(link);
+            themeSection.appendChild(header);
+
+            // Color Chips
+            const colorRow = document.createElement('div');
+            colorRow.className = 'color-row';
+
+            theme.colors.forEach(hex => {
+                const card = document.createElement('div');
+                card.className = 'color-card';
+                
+                // FIXED: Stop propagation here so clicking a chip doesn't trigger the themeSection update
+                card.onclick = (e) => {
+                    e.stopPropagation(); 
+                    copyToClipboard(hex);
+                };
+
+                const chip = document.createElement('div');
+                chip.className = 'color-chip';
+                chip.style.backgroundColor = hex;
+
+                const hexLabel = document.createElement('span');
+                hexLabel.className = 'color-hex';
+                hexLabel.textContent = hex;
+
+                card.appendChild(chip);
+                card.appendChild(hexLabel);
+                colorRow.appendChild(card);
+            });
+
+            themeSection.appendChild(colorRow);
+            container.appendChild(themeSection);
+        });
+
+        // Intersection Observer for Scroll Animations
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.theme-section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
