@@ -15,7 +15,7 @@ $PUTTY_EXE     = Join-Path $INSTALL_DIR "putty.exe"
 $SHORTCUT_PATH = Join-Path ([Environment]::GetFolderPath("Desktop")) "SIPAM.lnk"
 $SESSION_NAME  = "SIPAM"
 
-# -- Helpers (sin emojis -- compatibilidad PS 5.1) ------------
+# -- Helpers --------------------------------------------------
 function Write-Step { param($msg) Write-Host "[...] $msg" -ForegroundColor Cyan }
 function Write-Ok   { param($msg) Write-Host " [OK] $msg" -ForegroundColor Green }
 function Write-Skip { param($msg) Write-Host "[OMI] $msg" -ForegroundColor DarkGray }
@@ -54,12 +54,20 @@ if (Test-Path $PUTTY_EXE) {
 
 # =============================================================
 # 3. Sesion PuTTY en el registro (HKCU -- sin admin)
+#
+# Indices de color en PuTTY:
+#   Colour0 = texto por defecto (foreground)
+#   Colour1 = texto bold
+#   Colour2 = cursor
+#   Colour3 = texto del cursor
+#   Colour4 = fondo (background)
+#   Colour5 = fondo bold
 # =============================================================
 $REG_BASE = "HKCU:\Software\SimonTatham\PuTTY\Sessions\$SESSION_NAME"
 $sessionExists = Test-Path $REG_BASE
 
 if ($sessionExists) {
-    Write-Skip "Sesion PuTTY '$SESSION_NAME' ya existe -- actualizando valores"
+    Write-Skip "Sesion '$SESSION_NAME' ya existe -- actualizando valores"
 } else {
     Write-Step "Configurando sesion SIPAM en PuTTY..."
 }
@@ -67,23 +75,29 @@ if ($sessionExists) {
 New-Item -Path $REG_BASE -Force | Out-Null
 
 $settings = @{
-    "HostName"         = $SIPAM_IP
-    "PortNumber"       = [int]$SIPAM_PORT
-    "Protocol"         = "telnet"
-    "TerminalType"     = "vt220"
-    "TerminalSpeed"    = "38400,38400"
-    "FunctionKeysType" = [int]1
-    "ApplicationKeypad"= [int]0
-    "WinTitle"         = "SIPAM"
-    "Columns"          = [int]80
-    "Rows"             = [int]24
-    "ScrollbackLines"  = [int]500
-    "LineCodePage"     = "UTF-8"
-    "Colour0"          = "0,255,0"
-    "Colour2"          = "0,255,0"
-    "Colour4"          = "0,0,0"
-    "Colour6"          = "0,0,0"
-    "CloseOnExit"      = [int]1
+    # Conexion
+    "HostName"          = $SIPAM_IP
+    "PortNumber"        = [int]$SIPAM_PORT
+    "Protocol"          = "telnet"
+    # Terminal
+    "TerminalType"      = "vt220"
+    "TerminalSpeed"     = "38400,38400"
+    "FunctionKeysType"  = [int]1
+    "ApplicationKeypad" = [int]0
+    "WinTitle"          = "SIPAM"
+    "Columns"           = [int]80
+    "Rows"              = [int]24
+    "ScrollbackLines"   = [int]500
+    "LineCodePage"      = "UTF-8"
+    # Colores: texto blanco sobre fondo negro (legible, sin confusion)
+    "Colour0"           = "187,187,187"   # foreground: gris claro
+    "Colour1"           = "255,255,255"   # bold foreground: blanco
+    "Colour2"           = "0,255,0"       # cursor: verde
+    "Colour3"           = "0,0,0"         # cursor text: negro
+    "Colour4"           = "0,0,0"         # background: negro
+    "Colour5"           = "0,0,0"         # bold background: negro
+    # Cierre
+    "CloseOnExit"       = [int]1
 }
 
 foreach ($key in $settings.Keys) {
@@ -125,9 +139,9 @@ Write-Host "Para conectarte al SIPAM:" -ForegroundColor White
 Write-Host "  Haz doble clic en el icono SIPAM de tu Escritorio." -ForegroundColor White
 Write-Host ""
 Write-Host "Credenciales:" -ForegroundColor White
-Write-Host "  1. Primer Password: --> presiona Enter sin escribir nada" -ForegroundColor Gray
-Write-Host "  2. fenix login:     --> tu usuario (ej: con209)" -ForegroundColor Gray
-Write-Host "  3. Segundo Password:--> tu contrasena SIPAM" -ForegroundColor Gray
+Write-Host "  1. Primer Password:  --> presiona Enter sin escribir nada" -ForegroundColor Gray
+Write-Host "  2. fenix login:      --> tu usuario (ej: con209)" -ForegroundColor Gray
+Write-Host "  3. Segundo Password: --> tu contrasena SIPAM" -ForegroundColor Gray
 Write-Host ""
 
 Read-Host "Presiona Enter para cerrar"
