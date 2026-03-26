@@ -69,6 +69,11 @@ $sessionExists = Test-Path $REG_BASE
 # Siempre reconfiguramos la sesion para garantizar colores correctos
 Write-Step "Configurando sesion SIPAM en PuTTY (colores y conexion)..."
 
+# Eliminar la sesion existente completamente antes de recrear
+# (garantiza que no queden valores viejos de instalaciones previas)
+if (Test-Path $REG_BASE) {
+    Remove-Item -Path $REG_BASE -Recurse -Force
+}
 New-Item -Path $REG_BASE -Force | Out-Null
 
 $settings = @{
@@ -86,13 +91,19 @@ $settings = @{
     "Rows"              = [int]24
     "ScrollbackLines"   = [int]500
     "LineCodePage"      = "UTF-8"
-    # Colores: texto #4C566A (76,86,106) sobre fondo blanco
-    "Colour0"           = "76,86,106"     # foreground normal
-    "Colour1"           = "46,52,64"      # foreground bold (mas oscuro)
-    "Colour2"           = "76,86,106"     # cursor (mismo que texto)
-    "Colour3"           = "255,255,255"   # cursor text (blanco)
-    "Colour4"           = "255,255,255"   # background: blanco
-    "Colour5"           = "236,239,244"   # bold background: blanco suave
+    # Colores PuTTY (orden REAL verificado):
+    # Colour0 = Default Foreground (texto normal)
+    # Colour1 = Default Bold Foreground
+    # Colour2 = Default Background
+    # Colour3 = Default Bold Background
+    # Colour4 = Cursor colour
+    # Colour5 = Cursor text
+    "Colour0"           = "76,86,106"     # texto: #4C566A
+    "Colour1"           = "46,52,64"      # texto bold: mas oscuro
+    "Colour2"           = "255,255,255"   # fondo: blanco
+    "Colour3"           = "255,255,255"   # fondo bold: blanco
+    "Colour4"           = "76,86,106"     # cursor: mismo color que texto
+    "Colour5"           = "255,255,255"   # cursor text: blanco
     # Cierre
     "CloseOnExit"       = [int]1
 }
