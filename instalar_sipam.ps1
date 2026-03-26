@@ -66,11 +66,8 @@ if (Test-Path $PUTTY_EXE) {
 $REG_BASE = "HKCU:\Software\SimonTatham\PuTTY\Sessions\$SESSION_NAME"
 $sessionExists = Test-Path $REG_BASE
 
-if ($sessionExists) {
-    Write-Skip "Sesion '$SESSION_NAME' ya existe -- actualizando valores"
-} else {
-    Write-Step "Configurando sesion SIPAM en PuTTY..."
-}
+# Siempre reconfiguramos la sesion para garantizar colores correctos
+Write-Step "Configurando sesion SIPAM en PuTTY (colores y conexion)..."
 
 New-Item -Path $REG_BASE -Force | Out-Null
 
@@ -89,13 +86,13 @@ $settings = @{
     "Rows"              = [int]24
     "ScrollbackLines"   = [int]500
     "LineCodePage"      = "UTF-8"
-    # Colores: texto blanco sobre fondo negro (legible, sin confusion)
-    "Colour0"           = "187,187,187"   # foreground: gris claro
-    "Colour1"           = "255,255,255"   # bold foreground: blanco
-    "Colour2"           = "0,255,0"       # cursor: verde
-    "Colour3"           = "0,0,0"         # cursor text: negro
-    "Colour4"           = "0,0,0"         # background: negro
-    "Colour5"           = "0,0,0"         # bold background: negro
+    # Colores: texto #4C566A (76,86,106) sobre fondo blanco
+    "Colour0"           = "76,86,106"     # foreground normal
+    "Colour1"           = "46,52,64"      # foreground bold (mas oscuro)
+    "Colour2"           = "76,86,106"     # cursor (mismo que texto)
+    "Colour3"           = "255,255,255"   # cursor text (blanco)
+    "Colour4"           = "255,255,255"   # background: blanco
+    "Colour5"           = "236,239,244"   # bold background: blanco suave
     # Cierre
     "CloseOnExit"       = [int]1
 }
