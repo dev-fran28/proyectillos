@@ -55,57 +55,60 @@ if (Test-Path $PUTTY_EXE) {
 # =============================================================
 # 3. Sesion PuTTY en el registro (HKCU -- sin admin)
 #
-# Indices de color en PuTTY:
-#   Colour0 = texto por defecto (foreground)
-#   Colour1 = texto bold
-#   Colour2 = cursor
-#   Colour3 = texto del cursor
-#   Colour4 = fondo (background)
-#   Colour5 = fondo bold
+# Secuencias de teclas verificadas contra el perfil Mac funcional
+# (captura HP 700/92 iTerm2):
+#   F1=ESC p  F2=ESC q  F3=ESC r  F4=ESC s
+#   F5=ESC t  F6=ESC u  F7=ESC v  F8=ESC w
+#   F9=ESC[20~  F10=ESC[21~  F11=ESC[23~  F12=ESC[31~
+#
+# PuTTY Keymappings: subclave separada bajo la sesion.
+# Formato: nombre = "<VKcode_decimal>:<modifier>"
+#   modifier: 0=ninguno, 1=shift, 2=ctrl, 4=alt
+# VK codes: F1=112, F2=113 ... F12=123
 # =============================================================
-$REG_BASE = "HKCU:\Software\SimonTatham\PuTTY\Sessions\$SESSION_NAME"
-$sessionExists = Test-Path $REG_BASE
+$REG_BASE  = "HKCU:\Software\SimonTatham\PuTTY\Sessions\$SESSION_NAME"
+$KEYS_BASE = "$REG_BASE\Keymappings"
 
-# Siempre reconfiguramos la sesion para garantizar colores correctos
-Write-Step "Configurando sesion SIPAM en PuTTY (colores y conexion)..."
+Write-Step "Configurando sesion SIPAM en PuTTY..."
 
-# Eliminar la sesion existente completamente antes de recrear
-# (garantiza que no queden valores viejos de instalaciones previas)
+# Borrar sesion anterior completamente para evitar valores huerfanos
 if (Test-Path $REG_BASE) {
     Remove-Item -Path $REG_BASE -Recurse -Force
 }
-New-Item -Path $REG_BASE -Force | Out-Null
+New-Item -Path $REG_BASE  -Force | Out-Null
+New-Item -Path $KEYS_BASE -Force | Out-Null
 
+# -- Configuracion general de la sesion -----------------------
 $settings = @{
     # Conexion
-    "HostName"          = $SIPAM_IP
-    "PortNumber"        = [int]$SIPAM_PORT
-    "Protocol"          = "telnet"
+    "HostName"           = $SIPAM_IP
+    "PortNumber"         = [int]$SIPAM_PORT
+    "Protocol"           = "telnet"
     # Terminal
-    "TerminalType"      = "vt220"
-    "TerminalSpeed"     = "38400,38400"
-    "FunctionKeysType"  = [int]1
-    "ApplicationKeypad" = [int]0
-    "WinTitle"          = "SIPAM"
-    "Columns"           = [int]80
-    "Rows"              = [int]24
-    "ScrollbackLines"   = [int]500
-    "LineCodePage"      = "UTF-8"
-    # Colores PuTTY (orden REAL verificado):
-    # Colour0 = Default Foreground (texto normal)
-    # Colour1 = Default Bold Foreground
-    # Colour2 = Default Background
-    # Colour3 = Default Bold Background
-    # Colour4 = Cursor colour
-    # Colour5 = Cursor text
-    "Colour0"           = "76,86,106"     # texto: #4C566A
-    "Colour1"           = "46,52,64"      # texto bold: mas oscuro
-    "Colour2"           = "255,255,255"   # fondo: blanco
-    "Colour3"           = "255,255,255"   # fondo bold: blanco
-    "Colour4"           = "76,86,106"     # cursor: mismo color que texto
-    "Colour5"           = "255,255,255"   # cursor text: blanco
-    # Cierre
-    "CloseOnExit"       = [int]1
+    "TerminalType"       = "vt220"
+    "TerminalSpeed"      = "38400,38400"
+    "LocalEcho"          = [int]0
+    "LocalEdit"          = [int]0
+    # Teclado: sin remapeo global, usamos Keymappings manual
+    "FunctionKeysType"   = [int]0
+    "ApplicationKeypad"  = [int]0
+    # Pantalla
+    "WinTitle"           = "SIPAM"
+    "Columns"            = [int]80
+    "Rows"               = [int]24
+    "ScrollbackLines"    = [int]500
+    "LineCodePage"       = "UTF-8"
+    # Colores: texto #4C566A (76,86,106) sobre fondo blanco
+    # Colour0=FG  Colour1=FG bold  Colour2=BG  Colour3=BG bold
+    # Colour4=cursor text  Colour5=cursor color
+    "Colour0"            = "76,86,106"
+    "Colour1"            = "46,52,64"
+    "Colour2"            = "255,255,255"
+    "Colour3"            = "255,255,255"
+    "Colour4"            = "76,86,106"
+    "Colour5"            = "255,255,255"
+    # Cierre automatico al desconectar
+    "CloseOnExit"        = [int]1
 }
 
 foreach ($key in $settings.Keys) {
@@ -116,7 +119,27 @@ foreach ($key in $settings.Keys) {
         Set-ItemProperty -Path $REG_BASE -Name $key -Value $val -Type String
     }
 }
-Write-Ok "Sesion '$SESSION_NAME' lista"
+
+# -- Mapa de teclado HP 700/92 --------------------------------
+# ESC = "`e" en PowerShell (caracter escape U+001B)
+# F1-F8: ESC + letra (secuencias propietarias HP)
+# F9-F12: ESC [ n ~ (secuencias VT220 extendidas)
+Write-Step "Configurando mapa de teclas HP 700/92..."
+
+Set-ItemProperty -Path $KEYS_BASE -Name "112:0" -Value "`ep"     -Type String  # F1  = ESC p
+Set-ItemProperty -Path $KEYS_BASE -Name "113:0" -Value "`eq"     -Type String  # F2  = ESC q
+Set-ItemProperty -Path $KEYS_BASE -Name "114:0" -Value "`er"     -Type String  # F3  = ESC r
+Set-ItemProperty -Path $KEYS_BASE -Name "115:0" -Value "`es"     -Type String  # F4  = ESC s
+Set-ItemProperty -Path $KEYS_BASE -Name "116:0" -Value "`et"     -Type String  # F5  = ESC t
+Set-ItemProperty -Path $KEYS_BASE -Name "117:0" -Value "`eu"     -Type String  # F6  = ESC u
+Set-ItemProperty -Path $KEYS_BASE -Name "118:0" -Value "`ev"     -Type String  # F7  = ESC v
+Set-ItemProperty -Path $KEYS_BASE -Name "119:0" -Value "`ew"     -Type String  # F8  = ESC w
+Set-ItemProperty -Path $KEYS_BASE -Name "120:0" -Value "`e[20~"  -Type String  # F9  = ESC[20~
+Set-ItemProperty -Path $KEYS_BASE -Name "121:0" -Value "`e[21~"  -Type String  # F10 = ESC[21~
+Set-ItemProperty -Path $KEYS_BASE -Name "122:0" -Value "`e[23~"  -Type String  # F11 = ESC[23~
+Set-ItemProperty -Path $KEYS_BASE -Name "123:0" -Value "`e[31~"  -Type String  # F12 = ESC[31~
+
+Write-Ok "Sesion '$SESSION_NAME' lista con mapa de teclas HP 700/92"
 
 # =============================================================
 # 4. Acceso directo en el Escritorio
