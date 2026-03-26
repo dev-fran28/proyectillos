@@ -272,6 +272,28 @@ code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--surf
   0%,100%{transform:translateX(-50%) translateY(0)}
   50%{transform:translateX(-50%) translateY(-4px)}
 }
+
+/* ── Method label ── */
+.method-label{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:20px 0 8px}
+/* ── How-to steps ── */
+.how-to-steps{display:flex;flex-direction:column;gap:10px;margin:12px 0 14px}
+.how-to-step{display:flex;align-items:flex-start;gap:12px;font-size:14px;color:var(--text-soft);line-height:1.5}
+.how-to-num{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-top:1px}
+kbd{display:inline-block;background:linear-gradient(160deg,#e5e9f0,#d8dee9 60%,#c8d0de);border:1px solid #b0bcd8;border-bottom:3px solid #8090b0;border-radius:5px;padding:1px 7px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#2e3440}
+/* ── Copy command block ── */
+.copy-cmd-block{background:#1e2433;border:1px solid #2d3748;border-radius:10px;overflow:hidden;margin:10px 0}
+.copy-cmd-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4a6080;padding:8px 16px 4px;font-family:'Space Grotesk',sans-serif}
+.copy-cmd-row{display:flex;align-items:center;gap:10px;padding:6px 16px 14px}
+.copy-cmd-text{flex:1;font-family:'JetBrains Mono',monospace;font-size:12px;color:#cae8ff;background:transparent;border:none;padding:0;word-break:break-all;white-space:pre-wrap}
+.copy-btn{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;background:#0078d4;color:white;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:background .2s;white-space:nowrap}
+.copy-btn:hover{background:#106ebe}
+.copy-btn.copied{background:#4a7c59}
+
+/* details/summary for PowerShell install fallback */
+details{border:1px solid rgba(0,120,212,.25);border-radius:8px;padding:10px 14px;background:rgba(0,120,212,.04)}
+details summary{font-size:13px;list-style:none}
+details summary::-webkit-details-marker{display:none}
+details[open] summary{margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -358,6 +380,11 @@ code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--surf
     </div>
   </div>
 
+  <div class="callout" style="border-left-color:#ebcb8b;background:rgba(235,203,139,.10)">
+    <strong style="color:#8a6800">⚠️ Importante: deja el archivo en la carpeta Descargas.</strong><br>
+    No lo muevas ni lo renombres. El comando del siguiente paso lo busca exactamente ahí. Si lo mueves accidentalmente, arrástralo de vuelta a Descargas antes de continuar.
+  </div>
+
   <div class="callout">
     <strong>¿El navegador bloquea la descarga?</strong> Chrome y Edge a veces advierten sobre archivos <code>.ps1</code>. Haz clic en <strong>Mantener</strong> o <strong>Conservar de todas formas</strong> — el archivo es seguro.
   </div>
@@ -381,16 +408,22 @@ code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--surf
     <div class="step-counter">02 / 03</div>
   </div>
   <h2>Ejecuta el script</h2>
-  <p>Localiza el archivo que descargaste, haz <strong class="right-click-highlight">clic derecho<span class="right-click-bubble">👆 aquí</span></strong> sobre él y selecciona <strong>"Ejecutar con PowerShell"</strong>.</p>
 
-  <!-- Right-click mockup -->
-  <div style="background:white;border:1px solid var(--border-md);border-radius:10px;overflow:hidden;margin:16px 0;box-shadow:0 4px 20px rgba(46,52,64,.1)">
-    <!-- File row -->
+  <!-- Error callout — most prominent -->
+  <div class="callout" style="border-left-color:#bf616a;background:rgba(191,97,106,.08)">
+    <strong style="color:#bf616a">⚠️ ¿Ves un error rojo que dice “running scripts is disabled”?</strong><br>
+    Esto es normal en computadoras del hospital — Windows bloqueó el archivo por política de seguridad. <strong>Usa el Método 2 directamente.</strong>
+  </div>
+
+  <!-- METHOD 1 -->
+  <p class="method-label">Método 1 — Lo más fácil (intenta primero)</p>
+  <p>Localiza el archivo descargado, haz <strong class="right-click-highlight">clic derecho<span class="right-click-bubble">👆 aquí</span></strong> sobre él y selecciona <strong>“Ejecutar con PowerShell”</strong>.</p>
+
+  <div style="background:white;border:1px solid var(--border-md);border-radius:10px;overflow:hidden;margin:12px 0 20px;box-shadow:0 4px 20px rgba(46,52,64,.1)">
     <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border-md)">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="4" y="2" width="16" height="20" rx="2" fill="#012456"/><path d="M8 8h8M8 12h5" stroke="#6ea8d4" stroke-width="1.5" stroke-linecap="round"/><path d="M8 16h3" stroke="#4ec9b0" stroke-width="1.5" stroke-linecap="round"/></svg>
       <span style="font-size:14px;font-weight:600;color:var(--text-soft)">instalar_sipam.ps1</span>
     </div>
-    <!-- Context menu items -->
     <div style="padding:6px 0">
       <div style="padding:7px 16px;font-size:13px;color:var(--text-muted)">Abrir</div>
       <div style="padding:7px 16px;font-size:13px;background:#0078d4;color:white;font-weight:600;display:flex;align-items:center;gap:8px">
@@ -398,13 +431,77 @@ code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--surf
         Ejecutar con PowerShell
       </div>
       <div style="padding:7px 16px;font-size:13px;color:var(--text-muted)">Editar</div>
-      <div style="padding:7px 16px;font-size:13px;color:var(--text-muted)">Eliminar</div>
     </div>
   </div>
 
-  <!-- What happens in the terminal -->
-  <p>Verás una ventana azul de PowerShell. El script mostrará el progreso:</p>
+  <!-- METHOD 2 -->
+  <p class="method-label">Método 2 — Si el Método 1 da error rojo</p>
+  <p>Abre PowerShell manualmente y pega este comando. Evita la restricción sin necesitar ser administrador.</p>
 
+  <!-- ¿Tienen PowerShell? -->
+  <div class="callout win" style="margin-bottom:16px">
+    <strong>Antes de continuar — ¿tienes PowerShell?</strong><br>
+    Busca en el menú Inicio la palabra <strong>PowerShell</strong>. Si aparece una aplicación azul con ese nombre, ústala. Si <em>no aparece nada</em>, despliega la sección de abajo.
+    <details style="margin-top:10px">
+      <summary style="cursor:pointer;font-weight:600;color:#0078d4">No encuentro PowerShell — ¿cómo lo instalo?</summary>
+      <div style="margin-top:10px;line-height:1.7">
+        <p style="margin-bottom:8px">Algunas versiones institucionales de Windows lo tienen desactivado. Sigue estos pasos:</p>
+        <div class="how-to-steps" style="margin-top:0">
+          <div class="how-to-step">
+            <div class="how-to-num">1</div>
+            <div>Abre el menú Inicio y busca <strong>Microsoft Store</strong>. Ábrela.</div>
+          </div>
+          <div class="how-to-step">
+            <div class="how-to-num">2</div>
+            <div>Busca <strong>PowerShell</strong> dentro de la tienda e instálalo (es gratuito, de Microsoft).</div>
+          </div>
+          <div class="how-to-step">
+            <div class="how-to-num">3</div>
+            <div>Si la tienda también está bloqueada, pide apoyo a tu área de sistemas — necesitan habilitar PowerShell en tu equipo.</div>
+          </div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <div class="how-to-steps">
+    <div class="how-to-step">
+      <div class="how-to-num">1</div>
+      <div>
+        Busca <strong>PowerShell</strong> en el menú Inicio y ábrelo.<br>
+        <span style="font-size:12px;color:var(--text-muted)">También puedes presionar <kbd>Win</kbd>&nbsp;+&nbsp;<kbd>R</kbd>, escribir <code>powershell</code> y dar <kbd>Enter</kbd>.</span>
+      </div>
+    </div>
+    <div class="how-to-step">
+      <div class="how-to-num">2</div>
+      <div>
+        Verás una ventana azul o negra con texto blanco. Es normal — es PowerShell.<br>
+        <span style="font-size:12px;color:var(--text-muted)">⚠️ Si se abre una ventana negra que dice <strong>CMD</strong> o <strong>Símbolo del sistema</strong>, ciérrala y busca específicamente <em>PowerShell</em> — son diferentes.</span>
+      </div>
+    </div>
+    <div class="how-to-step">
+      <div class="how-to-num">3</div>
+      <div>Haz clic dentro de la ventana, luego copia y pega este comando y presiona <kbd>Enter</kbd>:</div>
+    </div>
+  </div>
+
+  <div class="copy-cmd-block">
+    <div class="copy-cmd-label">Pega esto en PowerShell — funciona en cualquier computadora</div>
+    <div class="copy-cmd-row">
+      <code class="copy-cmd-text" id="bypass-cmd">powershell -ExecutionPolicy Bypass -File $env:USERPROFILE\Downloads\instalar_sipam.ps1</code>
+      <button class="copy-btn" onclick="copyCmd()" title="Copiar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        <span id="copy-label">Copiar</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="callout win">
+    <strong>Si el archivo no está en Descargas:</strong> cambia <code>Downloads</code> por la carpeta donde lo guardaste. Ejemplo: <code>Desktop</code> si está en el Escritorio.<br>
+    <span style="font-size:12px;opacity:.8"><code>$env:USERPROFILE</code> se convierte automáticamente en la ruta de tu usuario — no lo cambies. No agregues comillas.</span>
+  </div>
+
+  <p style="margin-top:18px">Si todo va bien, verás esto:</p>
   <div class="ps-block">
     <div class="ps-header">
       <svg class="ps-icon" viewBox="0 0 24 24" fill="#6ea8d4"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.551H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-13.051-1.949"/></svg>
@@ -415,7 +512,7 @@ code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--surf
 
 <span class="ps-ok">✅</span> <span class="ps-plain">Carpeta SIPAM ya existe — omitiendo</span>
 <span class="ps-cmd">⬇️  Descargando PuTTY...</span>
-<span class="ps-ok">✅</span> <span class="ps-plain">PuTTY descargado en C:\Users\dr.garcia\SIPAM\putty.exe</span>
+<span class="ps-ok">✅</span> <span class="ps-plain">PuTTY descargado en C:\Users\gonza\SIPAM\putty.exe</span>
 <span class="ps-cmd">⚙️  Configurando sesión SIPAM en PuTTY...</span>
 <span class="ps-ok">✅</span> <span class="ps-plain">Sesión 'SIPAM' configurada</span>
 <span class="ps-cmd">⚙️  Creando acceso directo en el Escritorio...</span>
@@ -423,13 +520,6 @@ code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--surf
 
 <span class="ps-ok">🏁 Instalación completa.</span></code></pre>
     </div>
-  </div>
-
-  <div class="callout win">
-    <strong>¿Aparece un aviso de seguridad?</strong> Windows puede mostrar un cuadro azul que dice <em>"¿Deseas que esta aplicación realice cambios?"</em> Haz clic en <strong>Sí</strong> — o si no aparece ese cuadro, simplemente espera a que termine.
-  </div>
-  <div class="callout">
-    <strong>¿La ventana se cierra sola?</strong> Es normal — el script termina y espera que presiones <strong>Enter</strong> antes de cerrarse para que puedas leer el resultado.
   </div>
 
   <ul class="checklist">
@@ -585,6 +675,40 @@ const required = { 0:[], 1:['chk-1a'], 2:['chk-2a','chk-2b'], 3:[], 4:[] };
 const checked  = { 0:new Set(), 1:new Set(), 2:new Set(), 3:new Set(), 4:new Set() };
 let currentStep = 0;
 const MAX_STEP  = 4;
+
+
+function copyCmd() {
+  const el = document.getElementById('bypass-cmd');
+  // Strip any fancy/curly quotes the browser might render; keep only straight ASCII
+  const text = el.textContent
+    .replace(/“|”|‘|’/g, '"')
+    .trim();
+  // Try modern clipboard API first; fall back to execCommand for IE/Edge legacy
+  const finish = function() {
+    const btn = document.querySelector('.copy-btn');
+    const label = document.getElementById('copy-label');
+    btn.classList.add('copied');
+    label.textContent = '✓ Copiado';
+    setTimeout(() => { btn.classList.remove('copied'); label.textContent = 'Copiar'; }, 2500);
+  };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(finish).catch(function() {
+      fallbackCopy(text, finish);
+    });
+  } else {
+    fallbackCopy(text, finish);
+  }
+}
+function fallbackCopy(text, cb) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); if(cb) cb(); } catch(e) { alert('No se pudo copiar automáticamente. Selecciona el texto y usa Ctrl+C.'); }
+  document.body.removeChild(ta);
+}
 
 function toggleCheck(id, stepNum) {
   const li  = document.getElementById(id);
