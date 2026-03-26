@@ -247,9 +247,12 @@ code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--surf
 }
 
 /* ═══════════════════════ FLOATING BUTTON ═══════════════════════ */
-.why-btn{position:fixed;top:20px;left:20px;z-index:200;display:inline-flex;align-items:center;gap:8px;background:white;color:var(--primary);font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:.06em;padding:9px 16px;border-radius:100px;border:1.5px solid var(--border-md);box-shadow:0 2px 12px rgba(94,129,172,.15);cursor:pointer;transition:box-shadow .2s,transform .15s;opacity:0;animation:fadeUp .5s ease .3s forwards}
+.why-btn{position:fixed;top:62px;left:20px;z-index:200;display:inline-flex;align-items:center;gap:8px;background:white;color:var(--primary);font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:.06em;padding:9px 16px;border-radius:100px;border:1.5px solid var(--border-md);box-shadow:0 2px 12px rgba(94,129,172,.15);cursor:pointer;transition:box-shadow .2s,transform .15s;opacity:0;animation:fadeUp .5s ease .3s forwards}
 .why-btn:hover{box-shadow:0 4px 20px rgba(94,129,172,.25);transform:translateY(-1px)}
 .why-btn svg{flex-shrink:0;opacity:.7}
+.win-btn{position:fixed;top:20px;left:20px;z-index:200;display:inline-flex;align-items:center;gap:8px;background:#0078d4;color:white;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:.06em;padding:9px 16px;border-radius:100px;border:none;box-shadow:0 2px 12px rgba(0,120,212,.3);cursor:pointer;text-decoration:none;transition:box-shadow .2s,transform .15s,background .2s;opacity:0;animation:fadeUp .5s ease .45s forwards}
+.win-btn:hover{background:#106ebe;box-shadow:0 4px 20px rgba(0,120,212,.45);transform:translateY(-1px)}
+.win-btn svg{flex-shrink:0;opacity:.9}
 
 /* ═══════════════════════ MODAL ═══════════════════════ */
 .modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(46,52,64,.55);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .3s ease}
@@ -521,6 +524,7 @@ code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--surf
 @keyframes heartbeat{0%{transform:scale(1)}14%{transform:scale(1.5)}28%{transform:scale(1.2)}42%{transform:scale(2)}70%,100%{transform:scale(1)}}
 .site-footer a{color:#4c566a;text-decoration:none;font-weight:600;border-bottom:1.5px solid transparent;transition:border-color .2s,color .2s}
 .site-footer a:hover{color:#2e3440;border-bottom-color:#2e3440}
+.footer-updated{margin-top:.4rem;font-size:.72rem;color:#b0bec5;font-weight:400;letter-spacing:.01em}
 
 /* Confetti */
 .confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;display:none}
@@ -623,7 +627,7 @@ code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--surf
 .inline-link{background:none;border:none;color:var(--accent);cursor:pointer;font-family:inherit;font-size:inherit;font-weight:600;padding:0;text-decoration:underline}
 .inline-link:hover{color:var(--primary)}
 
-@media(max-width:540px){.page{padding:40px 16px 72px}.step{padding:24px 20px}h1{font-size:1.9rem}.modal-box{padding:24px 18px}.why-btn{top:12px;left:12px;font-size:11px;padding:7px 12px}}
+@media(max-width:540px){.page{padding:40px 16px 72px}.step{padding:24px 20px}h1{font-size:1.9rem}.modal-box{padding:24px 18px}.win-btn{top:10px;left:12px;font-size:11px;padding:7px 12px}.why-btn{top:48px;left:12px;font-size:11px;padding:7px 12px}}
 </style>
 </head>
 <body>
@@ -634,6 +638,11 @@ code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--surf
   <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 4v3M6.5 9v.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
   ¿Por qué necesito esto?
 </button>
+
+<a class="win-btn" href="https://f-gc.dev/winsipam" target="_blank">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.551H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-13.051-1.949"/></svg>
+  ¿Usas Windows?
+</a>
 
 <!-- ══ MODAL ══ -->
 <div class="modal-overlay" id="storyModal" onclick="handleOverlayClick(event)">
@@ -1006,6 +1015,7 @@ code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--surf
 
 <footer class="site-footer" id="footer-trigger">
   Made with <span class="heart">♥</span> by <a href="https://fguadarrama.com/about">Fran</a>
+  <div class="footer-updated">Última actualización: 26 de marzo, 2026 · 9:50am</div>
 </footer>
 </div><!-- /page -->
 
