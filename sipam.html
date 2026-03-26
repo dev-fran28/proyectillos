@@ -634,15 +634,15 @@ code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--surf
 <canvas class="confetti-canvas" id="confetti"></canvas>
 
 <!-- ══ FLOATING BUTTON ══ -->
-<button class="why-btn" onclick="openModal()">
-  <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 4v3M6.5 9v.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-  ¿Por qué necesito esto?
-</button>
-
 <a class="win-btn" href="https://f-gc.dev/winsipam" target="_blank">
   <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.551H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-13.051-1.949"/></svg>
   ¿Usas Windows?
 </a>
+
+<button class="why-btn" onclick="openModal()">
+  <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 4v3M6.5 9v.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  ¿Por qué necesito esto?
+</button>
 
 <!-- ══ MODAL ══ -->
 <div class="modal-overlay" id="storyModal" onclick="handleOverlayClick(event)">
@@ -899,35 +899,48 @@ code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--surf
   <h2>Ya estás conectado</h2>
 
   <p style="font-size:14px;font-weight:600;color:var(--primary);margin-bottom:6px;margin-top:4px;">A — Secuencia de inicio de sesión</p>
-  <p>Al abrir SIPAM desde el Dock verás esta pantalla. La animación muestra lo que ocurrirá:</p>
+  <p>Verás dos prompts consecutivos. Sigue los pasos en orden:</p>
 
+  <!-- Terminal 1: Password prompt — estática con animación de entrada -->
+  <div style="display:flex;align-items:flex-start;gap:10px;margin:14px 0 6px">
+    <div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-top:1px">1</div>
+    <p style="margin:0;font-size:15px;color:var(--text-soft)"><strong>Password:</strong> — presiona <code>Enter</code> sin escribir nada.</p>
+  </div>
   <div class="terminal-block light">
     <div class="terminal-header">
       <span class="t-dot t-dot-red"></span>
       <span class="t-dot t-dot-yellow"></span>
       <span class="t-dot t-dot-green"></span>
-      <span class="t-title">SIPAM — fenix</span>
+      <span class="t-title">SIPAM — fenix · paso 1 de 2</span>
     </div>
     <div class="terminal-layout" id="layout-login">
-      <pre class="tblock-a"><code><span class="t-dim">Trying 192.168.205.5...</span>
+      <pre><code><span class="t-dim">Trying 192.168.205.5...</span>
 <span class="t-dim">Connected to 192.168.205.5.</span>
 <span class="t-dim">Escape character is '^]'.</span>
 <span class="t-prompt">Password:</span><span class="t-hint-bubble">presiona Enter sin escribir nada</span>
 </code></pre>
-      <pre class="tblock-b"><code><span class="t-dim">Trying 192.168.205.5...</span>
-<span class="t-dim">Connected to 192.168.205.5.</span>
-<span class="t-dim">Escape character is '^]'.</span>
-<span class="t-prompt">Password:</span>
+    </div>
+  </div>
 
-<span class="t-warn">Login incorrect</span>
+  <!-- Terminal 2: Login sequence — estática con animación de entrada -->
+  <div style="display:flex;align-items:flex-start;gap:10px;margin:18px 0 6px">
+    <div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-top:1px">2</div>
+    <p style="margin:0;font-size:15px;color:var(--text-soft)"><strong>Login incorrect</strong> es normal — escribe tu usuario y contraseña.</p>
+  </div>
+  <div class="terminal-block light">
+    <div class="terminal-header">
+      <span class="t-dot t-dot-red"></span>
+      <span class="t-dot t-dot-yellow"></span>
+      <span class="t-dot t-dot-green"></span>
+      <span class="t-title">SIPAM — fenix · paso 2 de 2</span>
+    </div>
+    <div class="terminal-layout" id="layout-login2">
+      <pre><code><span class="t-warn">Login incorrect</span>
 <span class="t-prompt">fenix login:</span> <span class="t-input">con209</span>  <span class="t-hint">← tu usuario SIPAM</span>
 <span class="t-prompt">Password:</span> <span class="t-input">••••••••</span>  <span class="t-hint">← tu contraseña SIPAM</span>
 </code></pre>
     </div>
   </div>
-
-  <div class="callout"><strong>Password (primer prompt):</strong> presiona <code>Enter</code> sin escribir nada.</div>
-  <div class="callout"><strong>fenix login:</strong> escribe tu usuario habitual de SIPAM y presiona <code>Enter</code>. Luego ingresa tu contraseña.</div>
 
   <p style="font-size:14px;font-weight:600;color:var(--primary);margin-bottom:6px;margin-top:24px;">B — Pantalla principal del INNSZ SIPAM</p>
   <p>Al ingresar correctamente verás la pantalla de bienvenida:</p>
@@ -1259,32 +1272,32 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 </script>
 
 <script type="module">
-import { createLayout, stagger, random } from 'https://esm.sh/animejs@4.3.0';
+import { animate, stagger } from 'https://esm.sh/animejs@4.3.0';
 let started = false;
+
+// Animate all spans in a terminal layout: fade + slide up, staggered
+function animateTerminal(selector, startDelay) {
+  const spans = document.querySelectorAll(selector + ' code span');
+  if (!spans.length) return;
+  spans.forEach(s => { s.style.opacity = '0'; s.style.transform = 'translateY(6px)'; });
+  animate(spans, {
+    opacity:    [0, 1],
+    translateY: [6, 0],
+    duration:   380,
+    delay:      stagger(18, { start: startDelay }),
+    ease:       'outExpo',
+  });
+}
+
 window.__startSIPAMAnimations = () => {
   if (started) return; started = true;
   setTimeout(() => {
-    let morphDone = false;
-    const layout = createLayout('#layout-login', {
-      loop: false, duration: 800, delay: 100, ease: 'inOutExpo',
-      enterFrom: { opacity: 0, duration: 1000, delay: 60 },
-      leaveTo: {
-        opacity: 0,
-        transform: () => `translate(${random(-28,28)}px,${random(-70,70)}px) rotate(${random(-12,12)}deg)`,
-        duration: 600, delay: stagger([0,160],{from:'random'}), ease: 'out(3)',
-      },
-    });
-    document.fonts.ready.then(() => {
-      if (morphDone) return; morphDone = true;
-      layout.update(({ root }) => root.classList.add('show-b'));
-    });
-    setTimeout(() => {
-      const spans = document.querySelectorAll('#layout-main code span');
-      spans.forEach(s => { s.style.opacity='0'; s.style.transform='translateY(5px)'; });
-      import('https://esm.sh/animejs@4.3.0').then(({ animate, stagger: sg }) => {
-        animate(spans, { opacity:[0,1], translateY:[5,0], duration:350, delay:sg(10,{start:150}), ease:'outExpo' });
-      });
-    }, 500);
+    // Terminal 1: Password prompt  (inmediato)
+    animateTerminal('#layout-login', 0);
+    // Terminal 2: Login sequence   (empieza 600ms después)
+    setTimeout(() => animateTerminal('#layout-login2', 0), 600);
+    // Terminal B: pantalla principal (empieza 400ms después)
+    setTimeout(() => animateTerminal('#layout-main',   0), 400);
   }, 400);
 };
 </script>
