@@ -1,4 +1,0 @@
-{
-  "_instructions": "List JSON result files in this folder. The site will load them on startup and merge with the built-in data. Each JSON file is an array of result objects with the same schema as the 'results' sheet. The filename does not matter — use a descriptive name like '20260501-salud-digna.json'.",
-  "files": []
-}
