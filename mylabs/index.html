@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Historial médico | FGC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ysabeau:ital,wght@0,300..800;1,300..800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#f6f7fc;--ink:#062540;--ink-70:color-mix(in srgb,#062540 70%,transparent);--ink-50:color-mix(in srgb,#062540 50%,transparent);--ink-30:color-mix(in srgb,#062540 30%,transparent);--ink-12:color-mix(in srgb,#062540 12%,transparent);--ink-06:color-mix(in srgb,#062540 6%,transparent);--surface:#fff;--border:color-mix(in srgb,#062540 10%,transparent);--cat-quimica:#25d266;--shadow:0 24px 60px -24px color-mix(in srgb,#062540 30%,transparent);--font-ui:'Ysabeau',ui-serif,Georgia,serif;--font-num:'Space Grotesk',ui-monospace,'SF Mono',Menlo,monospace}*{box-sizing:border-box}html,body{height:100%;margin:0}body{min-height:100%;display:grid;place-items:center;background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}.login-shell{position:fixed;inset:0;display:grid;place-items:center;padding:24px;background:var(--bg)}.card{width:min(92vw,430px);background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:32px;box-shadow:var(--shadow);position:relative;overflow:hidden}.card::before{content:'';position:absolute;inset:0 0 auto 0;height:4px;background:var(--ink)}.lock{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--cat-quimica) 13%,transparent);margin-bottom:18px}.lock svg{width:22px;height:22px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.16em;color:var(--ink-50);font-weight:500}.brand{font-size:28px;line-height:1.08;font-weight:600;letter-spacing:-.02em;margin:10px 0 8px}.sub{color:var(--ink-70);font-size:15px;line-height:1.45;margin:0 0 24px}label{display:block;font-size:13px;color:var(--ink-70);margin-bottom:8px}input{width:100%;border:1px solid var(--border);border-radius:14px;padding:13px 14px;font:inherit;color:var(--ink);background:#fff;outline:none}input:focus{border-color:var(--ink);box-shadow:0 0 0 4px var(--ink-06)}button{width:100%;margin-top:14px;border:0;border-radius:14px;padding:13px 16px;font:inherit;font-weight:700;cursor:pointer;background:var(--ink);color:#fff}button:disabled{opacity:.55;cursor:progress}.error{min-height:20px;margin-top:12px;color:#ff1d58;font-size:13px}.shake{animation:shake .26s ease-in-out}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  </style>
+</head>
+<body>
+  <main class="login-shell">
+    <section class="card" id="card">
+      <div class="lock" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M7 10V8a5 5 0 0 1 10 0v2" stroke="#062540" stroke-width="2" stroke-linecap="round"/><rect x="5" y="10" width="14" height="10" rx="2.5" stroke="#062540" stroke-width="2"/><path d="M12 14v2" stroke="#062540" stroke-width="2" stroke-linecap="round"/></svg></div>
+      <div class="eyebrow">Acceso protegido</div>
+      <div class="brand">Historial médico | FGC</div>
+      <p class="sub">Introduce la contraseña para abrir el visualizador de laboratorios.</p>
+      <form id="form" autocomplete="current-password">
+        <label for="password">Contraseña</label>
+        <input id="password" name="password" type="password" autofocus />
+        <button id="submit" type="submit">Entrar</button>
+        <div class="error" id="error" role="alert"></div>
+      </form>
+    </section>
+  </main>
+  <script>
+    const payload = {"v":1,"kdf":"PBKDF2-SHA256","cipher":"AES-256-GCM","iterations":210000,"salt":"yMHXwMUezOrkumffoTDlNQ==","iv":"gKrFn5Pm7vSI/ny3","data":"PzTIKoNpOKfr4zce7EEMUgowLdTuhx/6wHR6ia53wUGonAM1c8/V6ZqKD+8jP+7LQPPiMSXB5LYWZftNBGb6L3vezcztXG3Hs/fxOdLXXvN3U+BJSM1FELdPDhDgoB/X0YesKbFw6WoL68u5ebLh0Pd3CE3hLNUPmmvk4f3c3E2mUIKCEwOCYka0sW9ewRWjjEF3nVyRNajycQI4NX16UIdjoFch2ELMeO3c6lyNE1pcK7yOokMvpcPsfF6TkYEij7OJm55u1u4NnKsQEUYZ74mZhu3952KkttQOuwLHF/9zIqzTV6PO9Lhs4RcLWB9zzkYqbBI7d+HV1IKCYIpjndPJsnXCaoSkSBArig0dVjbciIOIkfvJWcL9KBxQB2PBbIoBHaoSVztNRW1KS436EBH89SjK8OhfOlYR+wrkG0HkJJi3XI9ucq+PhVuofadupXbR6UF0Rm29s9O81lSzx79kly7pGPhGbeHbNknSSqCIDlBfxIKh97IfmXy2Ob2Mz4fef3uL2E+AdPAoXSHToqc618oxaDXVS30GEXEQZu4LnD/fcN74VmQCOK3EApP0FpD2gAwmgibxRf8EkXgDu+AqhHkIyW0AltnM07zwAo0l3eYHSXTvZ6KO+nqj2SXzq+ejiyW8nKQ64mJ2z/I+wCKK/lDhaOAk8B4PCykcQ0+kiUEIc/TR/+uyDv5NqhPMkjAQ3IwqSXnPdYxNHjxH8ma9EVqdioC2nwg9IzI1/aV4dPUkOj5QobvcKWwONAUAPDYWsHzM6NIrE1tj0L2S89O1/BSTdDqXOAM6XhEfjfN1jaPSOvylBJfcFdNt5A6eRQvOJk9SFt20V7uJdXnCl23RT7Bp606oCaYWF81GFxIZeg6uQ+RszE/BrF/8m7OTEqGnHI8nhIMz604x0inBwoLzLnhQUfVFY0xZZ0t+PeZkP0R9YXw0dthXcGRyAoGKQjjAbrBwx3wJIhutU6LcJn2X4VZ0riuMNQzdiNwl4n/zEEkHhpYv5ne8ZcuHxleWxbDBjIXpg52C+BEEyfjxY5v4LzbDMdxzX1sbRquGjQA26XefZmg2PCW4/gjUQPqEL6ELsjBkMTAHF3vC+1z7FGjxPV2GFbjjUMzM4gPyOz7KZ/4f9lXdD+HcFnQBkSeVSDZ0LfOIONVjiDc4PlDWSa3W19LvqupqkDqXYQ4IbYdGFRqRJSsWmTz8b5p8EqWgAsuv50CyC1WR3pPdDCK7UGmmiLwe0xyCKFMAcbhV95dQzlA3jadquQ5Il04rrqatXz6jAzCNLXeK/Zqg49a+SgOT5I5fjuqWDjl5ZRsL5Q8y6V7TGyAs7MaBrAulToWekNck0jg5VwmEGfu7GdDTCJLSiPofKJTbPaLvwr/Wab3QrA5toP9oetZZh1uPG9Ltr1e9t1pfc/OMCoyhcCg73fOSuieO4r1Ktyw6Dxtt+zTKgH5Zfgvfpn/JXGCmymzDV5kOg6GlPmf7EgDJeyG3YG50TdAdS8ILMp0iBiEFFNRIEAEvwK4xLw9bLzfPtxF4p2I="};
+    const $ = (id) => document.getElementById(id);
+    const decoder = new TextDecoder();
+    const encoder = new TextEncoder();
+    const b64ToBytes = (b64) => Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    async function deriveKey(password) {
+      const baseKey = await crypto.subtle.importKey('raw', encoder.encode(password), 'PBKDF2', false, ['deriveKey']);
+      return crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt: b64ToBytes(payload.salt), iterations: payload.iterations, hash: 'SHA-256' },
+        baseKey,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['decrypt']
+      );
+    }
+    async function decrypt(password) {
+      const key = await deriveKey(password);
+      const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64ToBytes(payload.iv) }, key, b64ToBytes(payload.data));
+      return decoder.decode(plain);
+    }
+    async function unlock(password) {
+      const html = await decrypt(password);
+      document.open();
+      document.write(html);
+      document.close();
+    }
+    $('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      $('error').textContent = '';
+      $('submit').disabled = true;
+      try {
+        await unlock($('password').value);
+      } catch (err) {
+        $('error').textContent = 'Contraseña incorrecta.';
+        $('submit').disabled = false;
+        $('password').select();
+        $('card').classList.remove('shake');
+        void $('card').offsetWidth;
+        $('card').classList.add('shake');
+      }
+    });
+  </script>
+</body>
+</html>
